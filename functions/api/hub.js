@@ -42,6 +42,3 @@ export async function onRequest(context) {
   if (events) context.waitUntil(cache.put(key, res.clone()));
   return res;
 }
-  if (events) context.waitUntil(cache.put(key, res.clone()));
-  return res;
-}
