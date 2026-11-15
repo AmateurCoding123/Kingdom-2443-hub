@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kingdom 2443 Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#16336b;--sky2:#0f2554;--snow:#eef4ff;--ink:#14213d;--red:#c8374b;--teal:#1f9d8f;--blue:#3b6fd4;--leaf:#4f9d3a;--sun:#e9a93a;--plum:#7c4fc2;--card:#f6f9ff;--mut:#5b6b8c}
+*{box-sizing:border-box}
+body{margin:0;font:400 1rem/1.55 Nunito,system-ui,sans-serif;color:var(--snow);background:linear-gradient(180deg,var(--sky) 0,var(--sky2) 420px,#0b1b40 100%) fixed;min-height:100vh}
+h1,h2,h3{font-family:'Pirata One',Georgia,serif;font-weight:400;margin:0;letter-spacing:.02em}
+main{max-width:1000px;margin:0 auto;padding:0 18px 60px}
+.top{display:flex;align-items:center;gap:16px;padding:22px 0 8px}
+.shield{width:74px;height:86px;background:var(--red);clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%);display:grid;place-items:center;font:2rem 'Pirata One',serif;color:#fff;padding-bottom:10px;flex:none}
+.top h1{font-size:2.3rem;line-height:1}
+.top p{margin:4px 0 0;color:#b9c9ee}
+.hero{margin:18px 0 26px;display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}}
+.banner{background:var(--red);color:#fff;padding:22px 24px 34px;clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 16px),0 100%);position:relative}
+.banner h2{font-size:1.5rem;opacity:.92}
+.clock{display:flex;gap:10px;margin-top:10px}
+.clock div{text-align:center;min-width:64px}
+.clock b{display:block;font:2.6rem/1 'Pirata One',serif}
+.clock small{font-size:.8rem;opacity:.85}
+.side{display:grid;gap:12px}
+.mini{background:rgba(238,244,255,.1);border:2px solid rgba(238,244,255,.25);border-radius:14px 14px 14px 4px;padding:12px 16px}
+.mini h3{font-size:1.15rem;color:#cfe0ff}
+.mini p{margin:2px 0 0;font-weight:800;font-size:1.25rem}
+.mini span{font-weight:400;font-size:.9rem;color:#b9c9ee}
+section{margin-top:30px}
+section>h2{font-size:1.8rem;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+section>h2:after{content:"";flex:1;border-top:3px double rgba(238,244,255,.3)}
+.live{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:var(--card);color:var(--ink);border-radius:999px 999px 999px 6px;padding:6px 14px;font-weight:800;border-left:8px solid var(--blue)}
+.chip small{display:block;font-weight:600;color:var(--mut);font-size:.78rem}
+.day{margin-bottom:16px}
+.day h3{font-size:1.3rem;color:#cfe0ff;margin-bottom:6px}
+.row{background:var(--card);color:var(--ink);border-radius:10px;padding:9px 14px;margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;border-left:8px solid var(--blue)}
+.row.main{box-shadow:0 0 0 3px var(--sun)}
+.row b{flex:1 1 180px}
+.row time{color:var(--mut);font-size:.9rem}
+.t-WAR{border-color:var(--red)}.t-ALLIANCE{border-color:var(--blue)}.t-PACK{border-color:var(--teal)}.t-GROWTH{border-color:var(--leaf)}.t-DEALS{border-color:var(--sun)}.t-SPECIAL{border-color:var(--plum)}
+.tag{font-size:.75rem;font-weight:800;border-radius:6px;padding:1px 8px;background:#dfe8fb;color:var(--ink)}
+.tag.p{background:#fff1cf}
+.codes{display:flex;flex-wrap:wrap;gap:10px}
+.code{background:var(--card);color:var(--ink);border:2px dashed var(--blue);border-radius:10px;padding:8px 12px;font:800 1rem Nunito,sans-serif;cursor:pointer}
+.code:focus-visible,.code:hover{background:#fff;outline:3px solid var(--sun)}
+.note,#err{color:#b9c9ee;font-size:.9rem}
+#err{background:#5a1f2c;color:#fff;padding:10px 14px;border-radius:10px}
+@media(prefers-reduced-motion:no-preference){.banner{animation:sway 5s ease-in-out infinite;transform-origin:top center}@keyframes sway{50%{transform:rotate(.4deg)}}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div class="shield">2443</div><div><h1>Kingdom 2443</h1><p id="age">Loading kingdom info…</p></div></div>
+<p id="err" hidden>Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
+
+<div class="hero">
+  <div class="banner"><h2 id="kvkName">Next KvK</h2><div class="clock" id="kvk"></div></div>
+  <div class="side">
+    <div class="mini"><h3>Next transfer</h3><p id="trans">–</p></div>
+    <div class="mini"><h3>Times shown in</h3><p id="tz">–</p><span>Converted from UTC</span></div>
+  </div>
+</div>
+
+<section><h2>Happening now</h2><div class="live" id="live"></div></section>
+<section><h2>Event calendar</h2><div id="cal"></div><p class="note">Events marked “probable” may change. Gold outline means a main event.</p></section>
+<section><h2>Gift codes</h2><div class="codes" id="codes"></div><p class="note">Tap a code to copy it, then redeem it in the game.</p></section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const tf=new Intl.DateTimeFormat([],{weekday:'short',hour:'2-digit',minute:'2-digit'});
+const df=new Intl.DateTimeFormat([],{weekday:'long',day:'numeric',month:'short'});
+$('#tz').textContent=Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_',' ');
+let targets={};
+function parts(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1e3);return[['days',Math.floor(s/86400)],['hrs',Math.floor(s/3600)%24],['min',Math.floor(s/60)%60],['sec',s%60]]}
+function tick(){
+  const box=$('#kvk');box.replaceChildren();
+  if(targets.kvk)for(const[l,v]of parts(targets.kvk-Date.now())){const d=el('div');d.append(el('b',0,String(v).padStart(2,'0')),el('small',0,l));box.append(d)}
+  if(targets.tr){const p=parts(targets.tr-Date.now());$('#trans').textContent=p[0][1]+' days '+p[1][1]+' hrs'}
+}
+function render(h){
+  const ev=h.events,t=h.tracker&&h.tracker.data&&h.tracker.data.servers&&h.tracker.data.servers[0];
+  if(t){const d=Math.floor((Date.now()-Date.parse(t.openTime))/864e5);$('#age').textContent='Opened '+new Date(t.openTime).toLocaleDateString([],{day:'numeric',month:'long',year:'numeric'})+' · '+d+' days old'}
+  else $('#age').textContent='The kingdom of the Kingshot realm';
+  if(ev){
+    const base=Date.parse(ev.timestamp);
+    if(ev.kvk){targets.kvk=base+ev.kvk.timeLeft.total;$('#kvkName').textContent='KvK #'+ev.kvk.eventNumber+' begins in'}
+    if(ev.transfer)targets.tr=base+ev.transfer.timeLeft.total;
+    tick();setInterval(tick,1000);
+    const cal=ev.calendar||{},live=$('#live');
+    for(const e of cal.activeEvents||[]){const c=el('div','chip t-'+e.type,e.title);const h=Math.round((Date.parse(e.endUtc)-Date.now())/36e5);c.append(el('small',0,h>47?'ends in '+Math.round(h/24)+' days':'ends in '+Math.max(h,0)+' hrs'));live.append(c)}
+    if(!live.children.length)live.append(el('p','note','No events are running right now.'));
+    const now=Date.now(),days={};
+    (cal.events||[]).filter(e=>Date.parse(e.endUtc)>now).sort((a,b)=>Date.parse(a.startUtc)-Date.parse(b.startUtc)).forEach(e=>{const k=df.format(new Date(e.startUtc));(days[k]=days[k]||[]).push(e)});
+    for(const k in days){const d=el('div','day');d.append(el('h3',0,k));
+      for(const e of days[k]){const r=el('div','row t-'+e.type+(e.isMainEvent?' main':''));r.append(el('b',0,e.title),el('span','tag',e.type.toLowerCase()));
+        if(e.confidence==='probable')r.append(el('span','tag p','probable'));
+        r.append(el('time',0,tf.format(new Date(e.startUtc))+' to '+tf.format(new Date(e.endUtc))));d.append(r)}
+      $('#cal').append(d)}
+  }
+  let c=h.codes;c=Array.isArray(c)?c:(c&&(c.data&&(c.data.codes||c.data)||c.codes))||[];
+  if(!Array.isArray(c))c=[];
+  c.forEach(x=>{const v=typeof x==='string'?x:x&&x.code;if(!v)return;const b=el('button','code',v);b.type='button';b.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(v);b.textContent='Copied';setTimeout(()=>b.textContent=v,1200)};$('#codes').append(b)});
+  if(!$('#codes').children.length)$('#codes').append(el('p','note','No active gift codes right now.'));
+}
+fetch('/api/hub').then(r=>r.json()).then(render).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
+</script>
+</body>
+</html>
