@@ -45,11 +45,19 @@ section>h2:after{content:"";flex:1;border-top:3px double rgba(238,244,255,.3)}
 .t-WAR{border-color:var(--red)}.t-ALLIANCE{border-color:var(--blue)}.t-PACK{border-color:var(--teal)}.t-GROWTH{border-color:var(--leaf)}.t-DEALS{border-color:var(--sun)}.t-SPECIAL{border-color:var(--plum)}
 .tag{font-size:.75rem;font-weight:800;border-radius:6px;padding:1px 8px;background:#dfe8fb;color:var(--ink)}
 .tag.p{background:#fff1cf}
+.tag.open{background:#d5f2dc}
 .codes{display:flex;flex-wrap:wrap;gap:10px}
 .code{background:var(--card);color:var(--ink);border:2px dashed var(--blue);border-radius:10px;padding:8px 12px;font:800 1rem Nunito,sans-serif;cursor:pointer}
 .code:focus-visible,.code:hover{background:#fff;outline:3px solid var(--sun)}
+.ally{background:var(--card);color:var(--ink);border-radius:10px 10px 10px 4px;padding:12px 14px;display:flex;gap:14px;align-items:flex-start;margin-bottom:8px}
+.atag{background:var(--red);color:#fff;font:1.4rem 'Pirata One',serif;min-width:66px;text-align:center;padding:6px 8px 16px;clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%)}
+.ally h3{color:var(--ink);font-size:1.35rem}
+.ally p{margin:2px 0}
+.ally .note{color:var(--mut)}
+.ally .tag{margin-left:auto}
 .note,#err{color:#b9c9ee;font-size:.9rem}
 #err{background:#5a1f2c;color:#fff;padding:10px 14px;border-radius:10px}
+footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
 @media(prefers-reduced-motion:no-preference){.banner{animation:sway 5s ease-in-out infinite;transform-origin:top center}@keyframes sway{50%{transform:rotate(.4deg)}}}
 </style>
 </head>
@@ -69,6 +77,8 @@ section>h2:after{content:"";flex:1;border-top:3px double rgba(238,244,255,.3)}
 <section><h2>Happening now</h2><div class="live" id="live"></div></section>
 <section><h2>Event calendar</h2><div id="cal"></div><p class="note">Events marked “probable” may change. Gold outline means a main event.</p></section>
 <section><h2>Gift codes</h2><div class="codes" id="codes"></div><p class="note">Tap a code to copy it, then redeem it in the game.</p></section>
+<section><h2>Alliances</h2><button class="code" id="onlyOpen" type="button">Show all</button><div id="alli" style="margin-top:12px"></div></section>
+<footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.</footer>
 </main>
 <script>
 const $=s=>document.querySelector(s);
@@ -108,7 +118,20 @@ function render(h){
   c.forEach(x=>{const v=typeof x==='string'?x:x&&x.code;if(!v)return;if(x.expiresAt&&Date.parse(x.expiresAt)<Date.now())return;const b=el('button','code',v);b.type='button';b.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(v);b.textContent='Copied';setTimeout(()=>b.textContent=v,1200)};$('#codes').append(b)});
   if(!$('#codes').children.length)$('#codes').append(el('p','note','No active gift codes right now.'));
 }
-fetch('/api/hub').then(r=>r.json()).then(render).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
+function drawAlliances(list){
+  const box=$('#alli'),btn=$('#onlyOpen');let all=false;
+  if(!list.length){box.append(el('p','note','Alliance rankings are not available right now.'));btn.hidden=true;return}
+  const fmt=n=>n>=1e9?(n/1e9).toFixed(2)+'B':(n/1e6).toFixed(1)+'M';
+  const draw=()=>{box.replaceChildren();
+    list.slice(0,all?list.length:6).forEach(a=>{
+      const c=el('div','ally'),b=el('div'),free=a.max-a.members;
+      b.append(el('h3',0,'#'+a.rank+' '+a.name));
+      b.append(el('p','note','Leader: '+a.leader+', '+a.language+', power '+fmt(a.power)));
+      c.append(el('div','atag',a.tag),b,el('span','tag'+(free>0?' open':''),free>0?free+' spaces':'Full'));
+      box.append(c)});
+    btn.textContent=all?'Show top 6 only':'Show all '+list.length;btn.hidden=list.length<=6};
+  btn.onclick=()=>{all=!all;draw()};draw()}
+fetch('/api/hub').then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
 </script>
 </body>
 </html>
