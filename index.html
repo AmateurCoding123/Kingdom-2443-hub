@@ -68,4 +68,107 @@ footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
 </head>
 <body>
 <main>
-<div class="top"><div class="shield">2443</div><div><h1>Kingdom
+<div class="top"><div class="shield">2443</div><div><h1>Kingdom 2443</h1><p id="age">Loading kingdom info…</p></div></div>
+<div class="tabs" role="tablist" aria-label="Hub sections">
+  <button class="tab" role="tab" data-tab="home" type="button">Home</button>
+  <button class="tab" role="tab" data-tab="events" type="button">Events</button>
+  <button class="tab" role="tab" data-tab="alliances" type="button">Alliances</button>
+  <button class="tab" role="tab" data-tab="codes" type="button">Codes</button>
+</div>
+<p id="err" hidden>Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
+
+<section class="panel" id="p-home" role="tabpanel">
+  <div class="hero">
+    <div class="banner"><h2 id="kvkName">Next KvK</h2><div class="clock" id="kvk"></div></div>
+    <div class="side">
+      <div class="mini"><h3>Next transfer</h3><p id="trans">–</p></div>
+      <div class="mini"><h3>Times shown in</h3><p id="tz">–</p><span>Converted from UTC</span></div>
+    </div>
+  </div>
+  <div class="sec"><h2>Happening now</h2><div class="live" id="live"></div></div>
+</section>
+
+<section class="panel sec" id="p-events" role="tabpanel" hidden>
+  <h2>Event calendar</h2><div id="cal"></div>
+  <p class="note">Events marked “probable” may change. Gold outline means a main event.</p>
+</section>
+
+<section class="panel sec" id="p-alliances" role="tabpanel" hidden>
+  <h2>Alliances</h2><button class="code" id="onlyOpen" type="button">Show all</button><div id="alli" style="margin-top:12px"></div>
+</section>
+
+<section class="panel sec" id="p-codes" role="tabpanel" hidden>
+  <h2>Gift codes</h2><div class="codes" id="codes"></div>
+  <p class="note">Tap a code to copy it, then redeem it in the game.</p>
+</section>
+
+<footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.</footer>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const tf=new Intl.DateTimeFormat([],{weekday:'short',hour:'2-digit',minute:'2-digit'});
+const df=new Intl.DateTimeFormat([],{weekday:'long',day:'numeric',month:'short'});
+$('#tz').textContent=Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_',' ');
+
+const tabs=[...document.querySelectorAll('.tab')];
+function show(id){
+  tabs.forEach(t=>{const on=t.dataset.tab===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1});
+  document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+id);
+}
+function route(){const id=location.hash.slice(1);show(tabs.some(t=>t.dataset.tab===id)?id:'home')}
+tabs.forEach((t,i)=>{
+  t.onclick=()=>{location.hash=t.dataset.tab};
+  t.onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();location.hash=n.dataset.tab}};
+});
+addEventListener('hashchange',route);route();
+
+let targets={};
+function parts(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1e3);return[['days',Math.floor(s/86400)],['hrs',Math.floor(s/3600)%24],['min',Math.floor(s/60)%60],['sec',s%60]]}
+function tick(){
+  const box=$('#kvk');box.replaceChildren();
+  if(targets.kvk)for(const[l,v]of parts(targets.kvk-Date.now())){const d=el('div');d.append(el('b',0,String(v).padStart(2,'0')),el('small',0,l));box.append(d)}
+  if(targets.tr){const p=parts(targets.tr-Date.now());$('#trans').textContent=p[0][1]+' days '+p[1][1]+' hrs'}
+}
+function render(h){
+  const ev=h.events,t=h.tracker&&h.tracker.data&&h.tracker.data.servers&&h.tracker.data.servers[0];
+  if(t){const d=Math.floor((Date.now()-Date.parse(t.openTime))/864e5);$('#age').textContent='Opened '+new Date(t.openTime).toLocaleDateString([],{day:'numeric',month:'long',year:'numeric'})+' · '+d+' days old'}
+  else $('#age').textContent='The kingdom of the Kingshot realm';
+  if(ev){
+    const base=Date.parse(ev.timestamp);
+    if(ev.kvk){targets.kvk=base+ev.kvk.timeLeft.total;$('#kvkName').textContent='KvK #'+ev.kvk.eventNumber+' begins in'}
+    if(ev.transfer)targets.tr=base+ev.transfer.timeLeft.total;
+    tick();setInterval(tick,1000);
+    const cal=ev.calendar||{},live=$('#live');
+    for(const e of cal.activeEvents||[]){const c=el('div','chip t-'+e.type,e.title);const h=Math.round((Date.parse(e.endUtc)-Date.now())/36e5);c.append(el('small',0,h>47?'ends in '+Math.round(h/24)+' days':'ends in '+Math.max(h,0)+' hrs'));live.append(c)}
+    if(!live.children.length)live.append(el('p','note','No events are running right now.'));
+    const now=Date.now(),days={};
+    (cal.events||[]).filter(e=>Date.parse(e.endUtc)>now).sort((a,b)=>Date.parse(a.startUtc)-Date.parse(b.startUtc)).forEach(e=>{const k=df.format(new Date(e.startUtc));(days[k]=days[k]||[]).push(e)});
+    for(const k in days){const d=el('div','day');d.append(el('h3',0,k));
+      for(const e of days[k]){const r=el('div','row t-'+e.type+(e.isMainEvent?' main':''));r.append(el('b',0,e.title),el('span','tag',e.type.toLowerCase()));
+        if(e.confidence==='probable')r.append(el('span','tag p','probable'));
+        r.append(el('time',0,tf.format(new Date(e.startUtc))+' to '+tf.format(new Date(e.endUtc))));d.append(r)}
+      $('#cal').append(d)}
+  }
+  let c=h.codes;c=Array.isArray(c)?c:(c&&c.data&&c.data.giftCodes)||[];
+  if(!Array.isArray(c))c=[];
+  c.forEach(x=>{const v=typeof x==='string'?x:x&&x.code;if(!v)return;if(x.expiresAt&&Date.parse(x.expiresAt)<Date.now())return;const b=el('button','code',v);b.type='button';b.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(v);b.textContent='Copied';setTimeout(()=>b.textContent=v,1200)};$('#codes').append(b)});
+  if(!$('#codes').children.length)$('#codes').append(el('p','note','No active gift codes right now.'));
+}
+function drawAlliances(list){
+  const box=$('#alli'),btn=$('#onlyOpen');let all=false;
+  if(!list.length){box.append(el('p','note','Alliance rankings are not available right now.'));btn.hidden=true;return}
+  const fmt=n=>n>=1e9?(n/1e9).toFixed(2)+'B':(n/1e6).toFixed(1)+'M';
+  const draw=()=>{box.replaceChildren();
+    list.slice(0,all?list.length:6).forEach(a=>{
+      const c=el('div','ally'),b=el('div'),free=a.max-a.members;
+      b.append(el('h3',0,'#'+a.rank+' '+a.name));
+      b.append(el('p','note','Leader: '+a.leader+', '+a.language+', power '+fmt(a.power)));
+      c.append(el('div','atag',a.tag),b,el('span','tag'+(free>0?' open':''),free>0?free+' spaces':'Full'));
+      box.append(c)});
+    btn.textContent=all?'Show top 6 only':'Show all '+list.length;btn.hidden=list.length<=6};
+  btn.onclick=()=>{all=!all;draw()};draw()}
+fetch('/api/hub').then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
+</script>
+</body>
+</html>
