@@ -103,9 +103,9 @@ function render(h){
         r.append(el('time',0,tf.format(new Date(e.startUtc))+' to '+tf.format(new Date(e.endUtc))));d.append(r)}
       $('#cal').append(d)}
   }
-  let c=h.codes;c=Array.isArray(c)?c:(c&&(c.data&&(c.data.codes||c.data)||c.codes))||[];
+  let c=h.codes;c=Array.isArray(c)?c:(c&&c.data&&c.data.giftCodes)||[];
   if(!Array.isArray(c))c=[];
-  c.forEach(x=>{const v=typeof x==='string'?x:x&&x.code;if(!v)return;const b=el('button','code',v);b.type='button';b.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(v);b.textContent='Copied';setTimeout(()=>b.textContent=v,1200)};$('#codes').append(b)});
+  c.forEach(x=>{const v=typeof x==='string'?x:x&&x.code;if(!v)return;if(x.expiresAt&&Date.parse(x.expiresAt)<Date.now())return;const b=el('button','code',v);b.type='button';b.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(v);b.textContent='Copied';setTimeout(()=>b.textContent=v,1200)};$('#codes').append(b)});
   if(!$('#codes').children.length)$('#codes').append(el('p','note','No active gift codes right now.'));
 }
 fetch('/api/hub').then(r=>r.json()).then(render).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
