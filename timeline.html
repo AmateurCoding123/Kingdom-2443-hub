@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kingdom 2443 Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a; --panel:#141210; --panel2:#1b1812;
+  --gold:#d4af37; --gold2:#f3d97a; --goldDim:#8a7226;
+  --text:#eee6d0; --muted:#9b927b; --line:#3a3220;
+  --heroes:#f0b429; --pets:#4fb286; --kvk:#e2574c; --battles:#d9772b;
+  --truegold:#f3d97a; --masters:#a77bd6; --other:#8d96a3;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{background:radial-gradient(1200px 500px at 50% -150px,#2a2108 0,#0a0a0a 70%) no-repeat,var(--bg);min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px 60px}
+.back{display:inline-block;color:var(--gold);text-decoration:none;font-size:.9rem;margin:4px 0 10px}
+h1{font-family:Cinzel,Georgia,serif;font-weight:800;margin:0;font-size:clamp(1.6rem,6vw,2.3rem);
+  background:linear-gradient(180deg,var(--gold2),var(--gold) 60%,var(--goldDim));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.04em}
+.sub{color:var(--muted);font-size:.85rem;margin:2px 0 16px}
+
+.hero{display:grid;gap:10px;grid-template-columns:1fr;margin-bottom:16px}
+@media(min-width:640px){.hero{grid-template-columns:1fr 1fr}}
+.box{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:14px}
+.box.gold{border-color:var(--gold);box-shadow:0 0 22px rgba(212,175,55,.15)}
+.eyebrow{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.big{font-family:Cinzel,Georgia,serif;font-size:1.25rem;margin:4px 0 2px}
+.small{color:var(--muted);font-size:.85rem}
+.count{font-family:Cinzel,Georgia,serif;font-size:1.5rem;color:var(--gold2);margin:6px 0;font-variant-numeric:tabular-nums}
+.bar{height:6px;background:#2a2417;border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--goldDim),var(--gold2))}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;margin:0 -14px;padding-left:14px;padding-right:14px;scrollbar-width:none;position:sticky;top:0;background:linear-gradient(var(--bg) 80%,transparent);z-index:5}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:99px;padding:8px 14px;font-size:.85rem;cursor:pointer}
+.chip b{color:var(--muted);font-weight:500;margin-left:4px}
+.chip.on{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1400;border-color:var(--gold);font-weight:600}
+.chip.on b{color:#4a3c08}
+
+.tl{position:relative;margin-left:14px;padding-left:22px;border-left:2px solid var(--line)}
+.item{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 10px}
+.item::before{content:"";position:absolute;left:-30px;top:18px;width:14px;height:14px;border-radius:50%;background:var(--c,var(--other));border:2px solid var(--bg);box-shadow:0 0 0 2px var(--c,var(--other))}
+.item.past{opacity:.6}
+.item.past::before{background:var(--bg)}
+.item.current{border-color:var(--gold);box-shadow:0 0 18px rgba(212,175,55,.22);opacity:1}
+.item.next{border-color:var(--goldDim)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.title{font-weight:600;line-height:1.3}
+.date{color:var(--muted);font-size:.82rem;margin-top:3px}
+.tag{flex:none;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:2px 8px}
+.when{margin-top:6px;font-size:.85rem;color:var(--gold2);font-variant-numeric:tabular-nums}
+.badge{display:inline-block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#1a1400;border-radius:6px;padding:2px 7px;margin-right:6px;font-weight:700}
+.now{margin:14px 0 14px -33px;display:flex;align-items:center;gap:10px;color:var(--gold)}
+.now::before{content:"";width:20px;height:20px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold)}
+.now span{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+.now::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.more{display:block;width:100%;background:none;border:1px dashed var(--line);color:var(--gold);border-radius:10px;padding:10px;margin:0 0 12px;cursor:pointer;font-size:.88rem}
+.state{text-align:center;padding:40px 10px;color:var(--muted)}
+.spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;margin:0 auto 12px;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+.err{background:#2a1210;border:1px solid #6b2a24;color:#f0b8b0;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.88rem}
+button.retry{margin-top:10px;background:var(--gold);color:#1a1400;border:0;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer}
+.foot{color:var(--muted);font-size:.75rem;text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/">← Kingdom 2443 Hub</a>
+  <h1>Kingdom Timeline</h1>
+  <div class="sub" id="sub">Kingdom 2443 progression</div>
+  <div id="app"><div class="state"><div class="spin"></div>Loading timeline…</div></div>
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+(function(){
+  var ENDPOINT = '/api/timeline';
+  var REFRESH_MS = 5 * 60 * 1000;
+  var PAST_VISIBLE = 4;
+
+  var CATS = [['all','All'],['heroes','Heroes'],['pets','Pets'],['kvk','KvK'],
+              ['battles','Battles'],['truegold','Truegold'],['masters','Masters'],['other','Other']];
+
+  // Optional manual label overrides (key from the API -> display name)
+  var LABELS = {
+    'first-hall-of-governors-hog':'First Hall of Governors (HoG)',
+    'first-kvk-prep-starts':'First KvK Preparation Starts',
+    'first-kvk-castle-battle':'First KvK Castle Battle',
+    'first-alliance-brawl':'First Alliance Brawl',
+    'first-flamedragon-tyrant-battle':'First Flamedragon Tyrant Battle',
+    'governor-gear-infusion':'Governor Gear Infusion',
+    'gov-gear-material-exchange-unlocks':'Governor Gear Material Exchange',
+    'gov-charm-material-exchange-unlocked':'Governor Charm Material Exchange',
+    '4th-master-unlocked':'4th Master Unlocked',
+    '5th-and-6th-masters-unlocked':'5th & 6th Masters Unlocked',
+    '7th-and-8th-masters-unlocked':'7th & 8th Masters Unlocked',
+    '9th-and-10th-masters-unlocked':'9th & 10th Masters Unlocked',
+    'masters-unlocked':'Masters Unlocked'
+  };
+
+  var state = {items:null, filter:'all', showAllPast:false, error:null, updated:null, loading:true};
+
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+  function categorize(key){
+    if(/kvk/.test(key)) return 'kvk';
+    if(/truegold/.test(key)) return 'truegold';
+    if(/master/.test(key)) return 'masters';
+    if(/hero/.test(key)) return 'heroes';
+    if(/pet/.test(key)) return 'pets';
+    if(/battle|brawl/.test(key)) return 'battles';
+    return 'other';
+  }
+
+  function label(key){
+    if(LABELS[key]) return LABELS[key];
+    var m = key.match(/^gen(\d+)-(heroes|pets)$/);
+    if(m) return 'Generation '+m[1]+' '+(m[2]==='heroes'?'Heroes':'Pets');
+    m = key.match(/^truegold-(\d+)$/);
+    if(m) return 'Truegold '+m[1];
+    return key.split('-').map(function(w){return w.charAt(0).toUpperCase()+w.slice(1)}).join(' ');
+  }
+
+  function normalise(json){
+    if(!json || !json.success || !json.result || !json.result.unlocks) throw new Error('Unexpected data format');
+    var r = json.result, out = [];
+    if(r.createdDate) out.push({key:'kingdom-created',title:'Kingdom Created',date:r.createdDate,cat:'other'});
+    Object.keys(r.unlocks).forEach(function(k){
+      out.push({key:k,title:label(k),date:r.unlocks[k],cat:categorize(k)});
+    });
+    out.forEach(function(i){ i.ts = Date.parse(i.date+'T00:00:00Z'); });
+    out = out.filter(function(i){return !isNaN(i.ts)});
+    out.sort(function(a,b){return a.ts-b.ts || a.title.localeCompare(b.title)});
+    return {items:out, created:r.createdDate, kingdom:r.kingdomNumber};
+  }
+
+  function fmtDate(ts){
+    return new Date(ts).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+  }
+  function pad(n){return n<10?'0'+n:''+n}
+  function fmtCount(ms,short){
+    var s = Math.max(0,Math.floor(ms/1000));
+    var d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60), sec=s%60;
+    if(short){
+      if(d>=1) return d+'d '+h+'h';
+      return h+'h '+pad(m)+'m '+pad(sec)+'s';
+    }
+    return d+'d '+pad(h)+'h '+pad(m)+'m '+pad(sec)+'s';
+  }
+
+  function load(){
+    state.loading = !state.items;
+    state.error = null;
+    render();
+    return fetch(ENDPOINT,{cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('Server responded '+r.status); return r.json(); })
+      .then(function(j){
+        var n = normalise(j);
+        state.items = n.items; state.created = n.created; state.kingdom = n.kingdom;
+        state.updated = new Date(); state.error = null; state.loading = false;
+        render();
+      })
+      .catch(function(e){
+        state.error = e.message || 'Could not load timeline';
+        state.loading = false;
+        render();
+      });
+  }
+
+  function render(){
+    var app = document.getElementById('app');
+    if(state.loading && !state.items){
+      app.innerHTML = '<div class="state"><div class="spin"></div>Loading timeline…</div>';
+      return;
+    }
+    if(!state.items){
+      app.innerHTML = '<div class="state">Couldn’t load the timeline right now.<br><small>'+esc(state.error||'')+'</small><br><button class="retry" data-act="retry">Try again</button></div>';
+      return;
+    }
+
+    var now = Date.now();
+    var all = state.items;
+    var pastAll = all.filter(function(i){return i.ts<=now});
+    var upAll = all.filter(function(i){return i.ts>now});
+    var cur = pastAll[pastAll.length-1] || null;
+    var nxt = upAll[0] || null;
+
+    var h = '';
+    if(state.error) h += '<div class="err">Couldn’t refresh just now ('+esc(state.error)+'). Showing the last loaded data.</div>';
+
+    // Hero boxes
+    var day = state.created ? Math.floor((now-Date.parse(state.created+'T00:00:00Z'))/86400000)+1 : null;
+    h += '<div class="hero">';
+    h += '<div class="box gold"><div class="eyebrow">Current stage</div>';
+    h += cur ? '<div class="big">'+esc(cur.title)+'</div><div class="small">Since '+fmtDate(cur.ts)+'</div>' : '<div class="big">Not started</div>';
+    if(day) h += '<div class="small" style="margin-top:6px">Kingdom day '+day+'</div>';
+    h += '</div>';
+    h += '<div class="box"><div class="eyebrow">Up next</div>';
+    if(nxt){
+      h += '<div class="big">'+esc(nxt.title)+'</div><div class="small">'+fmtDate(nxt.ts)+' · 00:00 UTC</div>';
+      h += '<div class="count cd" data-ts="'+nxt.ts+'">'+fmtCount(nxt.ts-now)+'</div>';
+      if(cur){
+        var pct = Math.min(100,Math.max(0,(now-cur.ts)/(nxt.ts-cur.ts)*100));
+        h += '<div class="bar"><i style="width:'+pct.toFixed(1)+'%"></i></div>';
+      }
+    } else h += '<div class="big">All milestones reached</div>';
+    h += '</div></div>';
+
+    // Filters
+    h += '<div class="chips">';
+    CATS.forEach(function(c){
+      var n = c[0]==='all' ? all.length : all.filter(function(i){return i.cat===c[0]}).length;
+      if(c[0]!=='all' && n===0) return;
+      h += '<button class="chip'+(state.filter===c[0]?' on':'')+'" data-filter="'+c[0]+'">'+c[1]+'<b>'+n+'</b></button>';
+    });
+    h += '</div>';
+
+    // Timeline
+    function pass(i){return state.filter==='all' || i.cat===state.filter}
+    var past = pastAll.filter(pass), up = upAll.filter(pass);
+    var hidden = 0;
+    if(!state.showAllPast && past.length>PAST_VISIBLE){ hidden = past.length-PAST_VISIBLE; past = past.slice(-PAST_VISIBLE); }
+
+    h += '<div class="tl">';
+    if(hidden) h += '<button class="more" data-act="more">Show '+hidden+' earlier milestone'+(hidden>1?'s':'')+'</button>';
+    past.forEach(function(i){ h += card(i,'past',now,cur,nxt); });
+    h += '<div class="now"><span>Now</span></div>';
+    if(!up.length) h += '<div class="small" style="padding:6px 0 12px">No upcoming milestones'+(state.filter==='all'?'':' in this category')+'.</div>';
+    up.forEach(function(i){ h += card(i,'up',now,cur,nxt); });
+    h += '</div>';
+
+    app.innerHTML = h;
+    document.getElementById('sub').textContent = 'Kingdom '+(state.kingdom||2443)+' progression';
+    document.getElementById('foot').textContent = state.updated
+      ? 'Updated '+state.updated.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+' · refreshes automatically · dates shown in UTC · data from Kingshot Optimizer'
+      : '';
+  }
+
+  function card(i,kind,now,cur,nxt){
+    var cls = 'item '+(kind==='past'?'past':'');
+    var isCur = cur && i.key===cur.key;
+    var isNext = nxt && i.key===nxt.key;
+    if(isCur) cls += ' current';
+    if(isNext) cls += ' next';
+    var h = '<div class="'+cls+'" style="--c:var(--'+i.cat+')">';
+    h += '<div class="row"><div><div class="title">';
+    if(isCur) h += '<span class="badge">Current</span>';
+    if(isNext) h += '<span class="badge" style="background:var(--goldDim);color:#fff">Next</span>';
+    h += esc(i.title)+'</div><div class="date">'+fmtDate(i.ts)+'</div></div><span class="tag">'+esc(catName(i.cat))+'</span></div>';
+    if(kind==='up') h += '<div class="when">in <span class="cd" data-short="1" data-ts="'+i.ts+'">'+fmtCount(i.ts-now,true)+'</span></div>';
+    else if(isCur && now-i.ts<86400000) h += '<div class="when">Unlocked today</div>';
+    return h+'</div>';
+  }
+  function catName(c){ for(var k=0;k<CATS.length;k++) if(CATS[k][0]===c) return CATS[k][1]; return c; }
+
+  // Live countdown tick
+  setInterval(function(){
+    if(!state.items) return;
+    var now = Date.now(), reached = false;
+    document.querySelectorAll('.cd').forEach(function(el){
+      var diff = Number(el.getAttribute('data-ts')) - now;
+      if(diff<=0){ reached = true; return; }
+      el.textContent = fmtCount(diff, !!el.getAttribute('data-short'));
+    });
+    if(reached) render();
+  },1000);
+
+  // Events
+  document.addEventListener('click',function(e){
+    var f = e.target.closest('[data-filter]');
+    if(f){ state.filter = f.getAttribute('data-filter'); render(); return; }
+    var a = e.target.closest('[data-act]');
+    if(!a) return;
+    if(a.getAttribute('data-act')==='more'){ state.showAllPast = true; render(); }
+    if(a.getAttribute('data-act')==='retry'){ load(); }
+  });
+
+  // Auto refresh
+  setInterval(load, REFRESH_MS);
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden && (!state.updated || Date.now()-state.updated.getTime()>60000)) load();
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
