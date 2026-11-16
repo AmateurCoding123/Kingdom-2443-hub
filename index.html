@@ -74,7 +74,7 @@ footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
   <button class="tab" role="tab" data-tab="events" type="button">Events</button>
   <button class="tab" role="tab" data-tab="alliances" type="button">Alliances</button>
   <button class="tab" role="tab" data-tab="codes" type="button">Codes</button>
-  <a href="/timeline.html">Timeline</a>
+    <button class="tab" role="tab" data-tab="timeline" type="button">Timeline</button>
 </div>
 <p id="err" hidden>Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
 
@@ -102,7 +102,11 @@ footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
   <h2>Gift codes</h2><div class="codes" id="codes"></div>
   <p class="note">Tap a code to copy it, then redeem it in the game.</p>
 </section>
-
+<section class="panel sec" id="p-timeline" role="tabpanel" hidden>
+  <h2>Kingdom timeline</h2>
+  <div id="tl-root"><p class="note">Loading timeline…</p></div>
+  <p class="note" id="tl-foot"></p>
+</section>
 <footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.</footer>
 </main>
 <script>
