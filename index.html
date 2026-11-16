@@ -170,6 +170,8 @@ tabs.forEach((t,i)=>{
 });
 addEventListener('hashchange',route);route();
 
+// kingshot.net numbers KvKs across the whole game (currently #21); our kingdom's own count is 2
+const KVK_OFFSET=19;
 let targets={};
 function parts(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1e3);return[['days',Math.floor(s/86400)],['hrs',Math.floor(s/3600)%24],['min',Math.floor(s/60)%60],['sec',s%60]]}
 function tick(){
@@ -182,7 +184,7 @@ function render(h){
   else $('#age').textContent='The kingdom of the Kingshot realm';
   if(ev){
     const base=Date.parse(ev.timestamp);
-    if(ev.kvk){targets.kvk=base+ev.kvk.timeLeft.total;$('#kvkName').textContent='KvK #'+ev.kvk.eventNumber+' begins in'}
+    if(ev.kvk){targets.kvk=base+ev.kvk.timeLeft.total;$('#kvkName').textContent='KvK #'+(ev.kvk.eventNumber-KVK_OFFSET)+' begins in'}
     tick();setInterval(tick,1000);
     const cal=ev.calendar||{},live=$('#live');
     for(const e of cal.activeEvents||[]){const c=el('div','chip t-'+e.type,e.title);const h=Math.round((Date.parse(e.endUtc)-Date.now())/36e5);c.append(el('small',0,h>47?'ends in '+Math.round(h/24)+' days':'ends in '+Math.max(h,0)+' hrs'));live.append(c)}
@@ -218,7 +220,7 @@ function drawAlliances(list){
       box.append(c)});
     btn.textContent=all?'Show top 6 only':'Show all '+list.length;btn.hidden=list.length<=6};
   btn.onclick=()=>{all=!all;draw()};draw()}
-fetch('/api/hub',{cache:'no-store'}).then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
+fetch('/api/hub',{cache:'no-store'}).then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(e=>{console.error('Hub load failed:',e);$('#err').hidden=false;$('#age').textContent=''});
 </script>
   <script src="/timeline.js?v=3" charset="utf-8" defer></script>
   <script src="/kvk.js?v=1" charset="utf-8" defer></script>
