@@ -64,6 +64,21 @@ main{max-width:1000px;margin:0 auto;padding:0 18px 60px}
 #err{background:#5a1f2c;color:#fff;padding:10px 14px;border-radius:10px;margin-top:12px}
 footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
 @media(prefers-reduced-motion:no-preference){.banner{animation:sway 5s ease-in-out infinite;transform-origin:top center}@keyframes sway{50%{transform:rotate(.4deg)}}}
+.kvk-form{background:rgba(238,244,255,.08);border:2px solid rgba(238,244,255,.25);border-radius:14px 14px 14px 4px;padding:16px;display:grid;gap:12px;margin:0 0 8px}
+.kvk-form [hidden]{display:none}
+.kvk-form label{display:grid;gap:4px;font-weight:800;color:#cfe0ff}
+.kvk-form label small{font-weight:400;color:#b9c9ee}
+.kvk-form input,.kvk-form select,.kvk-search{font:inherit;color:var(--ink);background:var(--card);border:2px solid transparent;border-radius:10px;padding:10px 12px;width:100%}
+.kvk-form input:focus,.kvk-form select:focus,.kvk-search:focus{outline:3px solid var(--sun)}
+.kvk-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.kvk-go{font:1.35rem 'Pirata One',Georgia,serif;background:var(--red);color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer}
+.kvk-go:disabled{opacity:.6;cursor:wait}
+.kvk-msg{min-height:1.4em;font-weight:800}
+.kvk-msg.bad{color:#ffb4bf}
+.kvk-msg.good{color:#9be3b0}
+.kvk-h{font-size:1.5rem;margin:22px 0 8px;color:#cfe0ff}
+.kvk-del{padding:2px 10px;font-size:.85rem}
+.kvk-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
 </style>
 </head>
 <body>
@@ -71,6 +86,7 @@ footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
 <div class="top"><div class="shield">2443</div><div><h1>Kingdom 2443</h1><p id="age">Loading kingdom info…</p></div></div>
 <div class="tabs" role="tablist" aria-label="Hub sections">
   <button class="tab" role="tab" data-tab="home" type="button">Home</button>
+    <button class="tab" role="tab" data-tab="kvk" type="button">Next KvK</button>
   <button class="tab" role="tab" data-tab="events" type="button">Events</button>
   <button class="tab" role="tab" data-tab="alliances" type="button">Alliances</button>
   <button class="tab" role="tab" data-tab="codes" type="button">Codes</button>
@@ -107,7 +123,11 @@ footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
   <div id="tl-root"><p class="note">Loading timeline…</p></div>
   <p class="note" id="tl-foot"></p>
 </section>
-<footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.</footer>
+<section class="panel sec" id="p-kvk" role="tabpanel" hidden>
+  <h2>Next KvK</h2>
+  <div id="kvk-root"><p class="note">Loading...</p></div>
+</section>
+  <footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.</footer>
 </main>
 <script>
 const $=s=>document.querySelector(s);
@@ -176,5 +196,6 @@ function drawAlliances(list){
 fetch('/api/hub').then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
 </script>
   <script src="/timeline.js?v=2" charset="utf-8" defer></script>
+  <script src="/kvk.js?v=1" charset="utf-8" defer></script>
 </body>
 </html>
