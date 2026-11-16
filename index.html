@@ -113,7 +113,6 @@ footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;le
   <button class="tab" role="tab" data-tab="kvk" type="button">Next KvK</button>
   <button class="tab" role="tab" data-tab="events" type="button">Events</button>
   <button class="tab" role="tab" data-tab="alliances" type="button">Alliances</button>
-  <button class="tab" role="tab" data-tab="codes" type="button">Codes</button>
   <button class="tab" role="tab" data-tab="timeline" type="button">Timeline</button>
 </div>
 <p id="err" hidden>Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
@@ -125,7 +124,11 @@ footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;le
       <div class="mini"><h3>Times shown in</h3><p id="tz">–</p><span>Converted from UTC</span></div>
     </div>
   </div>
-  
+  <div class="sec"><h2>Happening now</h2><div class="live" id="live"></div></div>
+  <div class="sec" style="margin-top:26px"><h2>Gift codes</h2><div class="codes" id="codes"></div>
+    <p class="note">Tap a code to copy it, then redeem it in the game.</p></div>
+</section>
+
 <section class="panel sec" id="p-events" role="tabpanel" hidden>
   <h2>Event calendar</h2><div id="cal"></div>
   <p class="note">Events marked “probable” may change. Gold outline means a main event.</p>
@@ -140,11 +143,13 @@ footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;le
   <div id="tl-root"><p class="note">Loading timeline…</p></div>
   <p class="note" id="tl-foot"></p>
 </section>
+
 <section class="panel sec" id="p-kvk" role="tabpanel" hidden>
   <h2>Next KvK</h2>
   <div id="kvk-root"><p class="note">Loading...</p></div>
 </section>
-  <footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.<span class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</span></footer>
+
+<footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.<span class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</span></footer>
 </main>
 <script>
 const $=s=>document.querySelector(s);
@@ -170,7 +175,6 @@ function parts(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1e3);return[['days',M
 function tick(){
   const box=$('#kvk');box.replaceChildren();
   if(targets.kvk)for(const[l,v]of parts(targets.kvk-Date.now())){const d=el('div');d.append(el('b',0,String(v).padStart(2,'0')),el('small',0,l));box.append(d)}
-  if(targets.tr){const p=parts(targets.tr-Date.now());$('#trans').textContent=p[0][1]+' days '+p[1][1]+' hrs'}
 }
 function render(h){
   const ev=h.events,t=h.tracker&&h.tracker.data&&h.tracker.data.servers&&h.tracker.data.servers[0];
@@ -179,7 +183,6 @@ function render(h){
   if(ev){
     const base=Date.parse(ev.timestamp);
     if(ev.kvk){targets.kvk=base+ev.kvk.timeLeft.total;$('#kvkName').textContent='KvK #'+ev.kvk.eventNumber+' begins in'}
-    if(ev.transfer)targets.tr=base+ev.transfer.timeLeft.total;
     tick();setInterval(tick,1000);
     const cal=ev.calendar||{},live=$('#live');
     for(const e of cal.activeEvents||[]){const c=el('div','chip t-'+e.type,e.title);const h=Math.round((Date.parse(e.endUtc)-Date.now())/36e5);c.append(el('small',0,h>47?'ends in '+Math.round(h/24)+' days':'ends in '+Math.max(h,0)+' hrs'));live.append(c)}
