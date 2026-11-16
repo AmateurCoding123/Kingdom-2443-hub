@@ -4,93 +4,117 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kingdom 2443 Hub</title>
+<meta name="theme-color" content="#070b16">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--sky:#16336b;--sky2:#0f2554;--snow:#eef4ff;--ink:#14213d;--red:#c8374b;--teal:#1f9d8f;--blue:#3b6fd4;--leaf:#4f9d3a;--sun:#e9a93a;--plum:#7c4fc2;--card:#f6f9ff;--mut:#5b6b8c}
+:root{
+  --bg0:#070b16;--bg1:#0d1426;--snow:#e9edf7;--ink:#e9edf7;--mut:#8b97b5;
+  --card:#141c32;--card2:#1b2542;--line:rgba(227,176,75,.28);
+  --gold:#e3b04b;--gold2:#f3d58a;
+  --red:#c8374b;--teal:#2bb3a3;--blue:#5b8def;--leaf:#6bbf59;--sun:#e3b04b;--plum:#9b6fe0;
+  --sky:#0d1426;--sky2:#070b16;
+}
 *{box-sizing:border-box}
-body{margin:0;font:400 1rem/1.55 Nunito,system-ui,sans-serif;color:var(--snow);background:linear-gradient(180deg,var(--sky) 0,var(--sky2) 420px,#0b1b40 100%) fixed;min-height:100vh}
-h1,h2,h3{font-family:'Pirata One',Georgia,serif;font-weight:400;margin:0;letter-spacing:.02em}
+body{margin:0;font:400 1rem/1.6 Inter,system-ui,sans-serif;color:var(--snow);min-height:100vh;
+  background:radial-gradient(1100px 480px at 50% -120px,#1d2d5a 0,transparent 70%),linear-gradient(180deg,var(--bg1) 0,var(--bg0) 100%) fixed;background-color:var(--bg0)}
+h1,h2,h3{font-family:Cinzel,Georgia,serif;font-weight:700;margin:0;letter-spacing:.04em}
 main{max-width:1000px;margin:0 auto;padding:0 18px 60px}
-.top{display:flex;align-items:center;gap:16px;padding:22px 0 8px}
-.shield{width:74px;height:86px;background:var(--red);clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%);display:grid;place-items:center;font:2rem 'Pirata One',serif;color:#fff;padding-bottom:10px;flex:none}
-.top h1{font-size:2.3rem;line-height:1}
-.top p{margin:4px 0 0;color:#b9c9ee}
-.tabs{display:flex;gap:8px;overflow-x:auto;position:sticky;top:0;z-index:5;background:var(--sky);padding:10px 0 0;border-bottom:3px solid var(--red)}
-.tab{flex:none;font:1.35rem 'Pirata One',Georgia,serif;letter-spacing:.03em;color:#cfe0ff;background:rgba(238,244,255,.1);border:0;border-radius:12px 12px 0 0;padding:8px 20px;cursor:pointer}
-.tab:hover{background:rgba(238,244,255,.2)}
-.tab[aria-selected=true]{background:var(--red);color:#fff}
-.tab:focus-visible{outline:3px solid var(--sun);outline-offset:-3px}
-.panel{margin-top:18px}
+.top{display:flex;align-items:center;gap:16px;padding:24px 0 12px}
+.shield{width:72px;height:84px;background:linear-gradient(160deg,var(--gold2),var(--gold) 55%,#b57f1f);clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%);display:grid;place-items:center;font:800 1.35rem Cinzel,serif;color:#1a1405;padding-bottom:10px;flex:none}
+.top h1{font-size:2rem;line-height:1.1;background:linear-gradient(90deg,#fff,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.top p{margin:4px 0 0;color:var(--mut)}
+.top .credit{color:var(--gold);font-size:.85rem;font-weight:600;letter-spacing:.03em}
+.tabs{display:flex;gap:6px;overflow-x:auto;position:sticky;top:0;z-index:5;background:rgba(7,11,22,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:10px 0 0;border-bottom:2px solid var(--gold)}
+.tab{flex:none;font:700 .9rem Cinzel,Georgia,serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);background:transparent;border:0;border-radius:10px 10px 0 0;padding:10px 16px;cursor:pointer;transition:background .15s,color .15s}
+.tab:hover{background:rgba(227,176,75,.12);color:var(--snow)}
+.tab[aria-selected=true]{background:var(--gold);color:#1a1405}
+.tab:focus-visible{outline:3px solid var(--gold2);outline-offset:-3px}
+.panel{margin-top:20px}
 .hero{margin:0 0 26px;display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
 @media(max-width:760px){.hero{grid-template-columns:1fr}}
-.banner{background:var(--red);color:#fff;padding:22px 24px 34px;clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 16px),0 100%);position:relative}
-.banner h2{font-size:1.5rem;opacity:.92}
-.clock{display:flex;gap:10px;margin-top:10px}
-.clock div{text-align:center;min-width:64px}
-.clock b{display:block;font:2.6rem/1 'Pirata One',serif}
-.clock small{font-size:.8rem;opacity:.85}
+.banner{background:linear-gradient(135deg,#7d1a2e,var(--red));color:#fff;padding:22px 24px 36px;clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 16px),0 100%);border-top:3px solid var(--gold)}
+.banner h2{font-size:1.2rem;opacity:.95}
+.clock{display:flex;gap:10px;margin-top:12px}
+.clock div{text-align:center;min-width:60px}
+.clock b{display:block;font:800 2.3rem/1 Cinzel,serif}
+.clock small{font-size:.75rem;opacity:.85;text-transform:uppercase;letter-spacing:.08em}
 .side{display:grid;gap:12px}
-.mini{background:rgba(238,244,255,.1);border:2px solid rgba(238,244,255,.25);border-radius:14px 14px 14px 4px;padding:12px 16px}
-.mini h3{font-size:1.15rem;color:#cfe0ff}
-.mini p{margin:2px 0 0;font-weight:800;font-size:1.25rem}
-.mini span{font-weight:400;font-size:.9rem;color:#b9c9ee}
-.sec>h2{font-size:1.8rem;margin-bottom:10px;display:flex;align-items:center;gap:12px}
-.sec>h2:after{content:"";flex:1;border-top:3px double rgba(238,244,255,.3)}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.mini h3{font-size:.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:.1em}
+.mini p{margin:4px 0 0;font-weight:800;font-size:1.2rem}
+.mini span{font-weight:400;font-size:.88rem;color:var(--mut)}
+.sec>h2{font-size:1.5rem;margin-bottom:12px;display:flex;align-items:center;gap:12px;color:var(--gold2)}
+.sec>h2:after{content:"";flex:1;border-top:1px solid var(--line)}
 .live{display:flex;flex-wrap:wrap;gap:10px}
-.chip{background:var(--card);color:var(--ink);border-radius:999px 999px 999px 6px;padding:6px 14px;font-weight:800;border-left:8px solid var(--blue)}
-.chip small{display:block;font-weight:600;color:var(--mut);font-size:.78rem}
-.day{margin-bottom:16px}
-.day h3{font-size:1.3rem;color:#cfe0ff;margin-bottom:6px}
-.row{background:var(--card);color:var(--ink);border-radius:10px;padding:9px 14px;margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;border-left:8px solid var(--blue)}
-.row.main{box-shadow:0 0 0 3px var(--sun)}
-.row b{flex:1 1 180px}
-.row time{color:var(--mut);font-size:.9rem}
+.chip{background:var(--card);color:var(--ink);border-radius:12px;padding:8px 14px;font-weight:700;border-left:6px solid var(--blue)}
+.chip small{display:block;font-weight:500;color:var(--mut);font-size:.78rem}
+.day{margin-bottom:18px}
+.day h3{font-size:1.05rem;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em}
+.row{background:var(--card);color:var(--ink);border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;border-left:6px solid var(--blue)}
+.row.main{box-shadow:0 0 0 2px var(--gold)}
+.row b{flex:1 1 180px;font-weight:700}
+.row time{color:var(--mut);font-size:.88rem}
 .t-WAR{border-color:var(--red)}.t-ALLIANCE{border-color:var(--blue)}.t-PACK{border-color:var(--teal)}.t-GROWTH{border-color:var(--leaf)}.t-DEALS{border-color:var(--sun)}.t-SPECIAL{border-color:var(--plum)}
-.tag{font-size:.75rem;font-weight:800;border-radius:6px;padding:1px 8px;background:#dfe8fb;color:var(--ink)}
-.tag.p{background:#fff1cf}
-.tag.open{background:#d5f2dc}
+.tag{font-size:.72rem;font-weight:700;border-radius:6px;padding:2px 8px;background:var(--card2);color:var(--snow);text-transform:uppercase;letter-spacing:.04em}
+.tag.p{background:rgba(227,176,75,.2);color:var(--gold2)}
+.tag.open{background:rgba(107,191,89,.2);color:#a6e39a}
 .codes{display:flex;flex-wrap:wrap;gap:10px}
-.code{background:var(--card);color:var(--ink);border:2px dashed var(--blue);border-radius:10px;padding:8px 12px;font:800 1rem Nunito,sans-serif;cursor:pointer}
-.code:focus-visible,.code:hover{background:#fff;outline:3px solid var(--sun)}
-.ally{background:var(--card);color:var(--ink);border-radius:10px 10px 10px 4px;padding:12px 14px;display:flex;gap:14px;align-items:flex-start;margin-bottom:8px}
-.atag{background:var(--red);color:#fff;font:1.4rem 'Pirata One',serif;min-width:66px;text-align:center;padding:6px 8px 16px;clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%)}
-.ally h3{color:var(--ink);font-size:1.35rem}
+.code{background:var(--card);color:var(--ink);border:1px dashed var(--gold);border-radius:10px;padding:8px 14px;font:700 .95rem Inter,sans-serif;cursor:pointer;transition:background .15s}
+.code:focus-visible,.code:hover{background:var(--card2);outline:2px solid var(--gold2)}
+.code.on{background:var(--gold);color:#1a1405;border:1px solid var(--gold)}
+.code.on b{opacity:.7}
+.ally{background:var(--card);color:var(--ink);border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:flex-start;margin-bottom:8px;border:1px solid rgba(255,255,255,.05)}
+.atag{background:linear-gradient(160deg,#8f1d33,var(--red));color:#fff;font:800 1rem Cinzel,serif;min-width:62px;text-align:center;padding:8px 8px 18px;clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%)}
+.ally h3{color:var(--snow);font-size:1.05rem}
 .ally p{margin:2px 0}
 .ally .note{color:var(--mut)}
 .ally .tag{margin-left:auto}
-.note,#err{color:#b9c9ee;font-size:.9rem}
-#err{background:#5a1f2c;color:#fff;padding:10px 14px;border-radius:10px;margin-top:12px}
-footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
-@media(prefers-reduced-motion:no-preference){.banner{animation:sway 5s ease-in-out infinite;transform-origin:top center}@keyframes sway{50%{transform:rotate(.4deg)}}}
-.kvk-form{background:rgba(238,244,255,.08);border:2px solid rgba(238,244,255,.25);border-radius:14px 14px 14px 4px;padding:16px;display:grid;gap:12px;margin:0 0 8px}
+.note,#err{color:var(--mut);font-size:.9rem}
+#err{background:#4a1a26;color:#fff;padding:10px 14px;border-radius:10px;margin-top:12px}
+footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:.85rem;text-align:center}
+footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;letter-spacing:.03em}
+.kvk-form{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;margin:0 0 8px}
 .kvk-form [hidden]{display:none}
-.kvk-form label{display:grid;gap:4px;font-weight:800;color:#cfe0ff}
-.kvk-form label small{font-weight:400;color:#b9c9ee}
-.kvk-form input,.kvk-form select,.kvk-search{font:inherit;color:var(--ink);background:var(--card);border:2px solid transparent;border-radius:10px;padding:10px 12px;width:100%}
-.kvk-form input:focus,.kvk-form select:focus,.kvk-search:focus{outline:3px solid var(--sun)}
+.kvk-form label{display:grid;gap:4px;font-weight:700;color:var(--gold2)}
+.kvk-form label small{font-weight:400;color:var(--mut)}
+.kvk-form input,.kvk-form select,.kvk-search{font:inherit;color:var(--ink);background:var(--bg1);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;width:100%}
+.kvk-form input:focus,.kvk-form select:focus,.kvk-search:focus{outline:2px solid var(--gold)}
 .kvk-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-.kvk-go{font:1.35rem 'Pirata One',Georgia,serif;background:var(--red);color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer}
+.kvk-go{font:700 1rem Cinzel,Georgia,serif;letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:#1a1405;border:0;border-radius:10px;padding:12px 18px;cursor:pointer}
 .kvk-go:disabled{opacity:.6;cursor:wait}
-.kvk-msg{min-height:1.4em;font-weight:800}
+.kvk-msg{min-height:1.4em;font-weight:700}
 .kvk-msg.bad{color:#ffb4bf}
 .kvk-msg.good{color:#9be3b0}
-.kvk-h{font-size:1.5rem;margin:22px 0 8px;color:#cfe0ff}
+.kvk-h{font-size:1.2rem;margin:22px 0 8px;color:var(--gold2)}
 .kvk-del{padding:2px 10px;font-size:.85rem}
 .kvk-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
+/* Timeline tab */
+.tl-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.tl-filters .code b{margin-left:6px;font-weight:600;opacity:.65}
+.tl-item{background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:8px;border-left:6px solid var(--c,var(--blue));display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.tl-item b{flex:1 1 220px;font-weight:700}
+.tl-item time{color:var(--mut);font-size:.88rem}
+.tl-past{opacity:.55}
+.tl-cur{box-shadow:0 0 0 2px var(--gold);opacity:1}
+.tl-next{box-shadow:0 0 0 2px var(--teal)}
+.tl-in{font-size:.85rem;color:var(--mut);margin-left:auto}
+.tl-now{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--gold);font:700 .85rem Cinzel,serif;letter-spacing:.2em;text-transform:uppercase}
+.tl-now:before,.tl-now:after{content:"";flex:1;border-top:1px solid var(--gold)}
+.tl-err{background:#4a1a26;color:#fff;padding:10px 14px;border-radius:10px}
 </style>
 </head>
 <body>
 <main>
-<div class="top"><div class="shield">2443</div><div><h1>Kingdom 2443</h1><p id="age">Loading kingdom info…</p></div></div>
+<div class="top"><div class="shield">2443</div><div><h1>Kingdom 2443</h1><p id="age">Loading kingdom info…</p><p class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</p></div></div>
 <div class="tabs" role="tablist" aria-label="Hub sections">
   <button class="tab" role="tab" data-tab="home" type="button">Home</button>
-    <button class="tab" role="tab" data-tab="kvk" type="button">Next KvK</button>
+  <button class="tab" role="tab" data-tab="kvk" type="button">Next KvK</button>
   <button class="tab" role="tab" data-tab="events" type="button">Events</button>
   <button class="tab" role="tab" data-tab="alliances" type="button">Alliances</button>
   <button class="tab" role="tab" data-tab="codes" type="button">Codes</button>
-    <button class="tab" role="tab" data-tab="timeline" type="button">Timeline</button>
+  <button class="tab" role="tab" data-tab="timeline" type="button">Timeline</button>
 </div>
 <p id="err" hidden>Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
 
@@ -127,7 +151,7 @@ footer{margin-top:40px;color:#8fa3cf;font-size:.85rem}
   <h2>Next KvK</h2>
   <div id="kvk-root"><p class="note">Loading...</p></div>
 </section>
-  <footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.</footer>
+  <footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.<span class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</span></footer>
 </main>
 <script>
 const $=s=>document.querySelector(s);
@@ -168,12 +192,17 @@ function render(h){
     for(const e of cal.activeEvents||[]){const c=el('div','chip t-'+e.type,e.title);const h=Math.round((Date.parse(e.endUtc)-Date.now())/36e5);c.append(el('small',0,h>47?'ends in '+Math.round(h/24)+' days':'ends in '+Math.max(h,0)+' hrs'));live.append(c)}
     if(!live.children.length)live.append(el('p','note','No events are running right now.'));
     const now=Date.now(),days={};
-    (cal.events||[]).filter(e=>Date.parse(e.endUtc)>now).sort((a,b)=>Date.parse(a.startUtc)-Date.parse(b.startUtc)).forEach(e=>{const k=df.format(new Date(e.startUtc));(days[k]=days[k]||[]).push(e)});
+    const evs=(cal.events||[]).filter(e=>Date.parse(e.endUtc)>now).sort((a,b)=>Date.parse(a.startUtc)-Date.parse(b.startUtc));
+    // Events already underway go in their own group instead of under the day they started (e.g. last Sunday)
+    evs.filter(e=>Date.parse(e.startUtc)<=now).forEach(e=>{(days['Happening now']=days['Happening now']||[]).push(e)});
+    evs.filter(e=>Date.parse(e.startUtc)>now).forEach(e=>{const k=df.format(new Date(e.startUtc));(days[k]=days[k]||[]).push(e)});
     for(const k in days){const d=el('div','day');d.append(el('h3',0,k));
       for(const e of days[k]){const r=el('div','row t-'+e.type+(e.isMainEvent?' main':''));r.append(el('b',0,e.title),el('span','tag',e.type.toLowerCase()));
         if(e.confidence==='probable')r.append(el('span','tag p','probable'));
-        r.append(el('time',0,tf.format(new Date(e.startUtc))+' to '+tf.format(new Date(e.endUtc))));d.append(r)}
+        const started=Date.parse(e.startUtc)<=now;
+        r.append(el('time',0,started?'Ends '+tf.format(new Date(e.endUtc)):tf.format(new Date(e.startUtc))+' to '+tf.format(new Date(e.endUtc))));d.append(r)}
       $('#cal').append(d)}
+    if(!$('#cal').children.length)$('#cal').append(el('p','note','No upcoming events listed.'));
   }
   let c=h.codes;c=Array.isArray(c)?c:(c&&c.data&&c.data.giftCodes)||[];
   if(!Array.isArray(c))c=[];
@@ -193,10 +222,9 @@ function drawAlliances(list){
       box.append(c)});
     btn.textContent=all?'Show top 6 only':'Show all '+list.length;btn.hidden=list.length<=6};
   btn.onclick=()=>{all=!all;draw()};draw()}
-fetch('/api/hub').then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
+fetch('/api/hub',{cache:'no-store'}).then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
 </script>
-  <script src="/timeline.js?v=2" charset="utf-8" defer></script>
+  <script src="/timeline.js?v=3" charset="utf-8" defer></script>
   <script src="/kvk.js?v=1" charset="utf-8" defer></script>
 </body>
 </html>
-
