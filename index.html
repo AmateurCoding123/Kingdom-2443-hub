@@ -175,5 +175,6 @@ function drawAlliances(list){
   btn.onclick=()=>{all=!all;draw()};draw()}
 fetch('/api/hub').then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(()=>{$('#err').hidden=false;$('#age').textContent=''});
 </script>
+  <script src="/timeline.js?v=2" charset="utf-8" defer></script>
 </body>
 </html>
