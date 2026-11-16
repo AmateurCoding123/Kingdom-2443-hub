@@ -2,6 +2,7 @@
 const KINGDOM = 2443;
 const KS = 'https://kingshot.net/api';
 const MP = 'https://mightpulse.com/api/kingdoms/' + KINGDOM + '?alliances=20';
+const MP_ALL = 'https://mightpulse.com/api/kingdoms/' + KINGDOM + '?alliances=100';
 
 async function getJson(url) {
   try {
@@ -18,11 +19,12 @@ export async function onRequest(context) {
   const hit = await cache.match(key);
   if (hit) return hit;
 
-  const [events, tracker, codes, mp] = await Promise.all([
+  const [events, tracker, codes, mp, mpAll] = await Promise.all([
     getJson(KS + '/events?week=1&kingdom=' + KINGDOM),
     getJson(KS + '/kingdom-tracker?kingdomId=' + KINGDOM),
     getJson(KS + '/gift-codes'),
     getJson(MP),
+    getJson(MP_ALL),
   ]);
 
   const alliances = mp && Array.isArray(mp.alliances)
@@ -33,7 +35,12 @@ export async function onRequest(context) {
       }))
     : [];
 
-  const res = new Response(JSON.stringify({ events, tracker, codes, alliances }), {
+  // Bigger tag list for the KvK signup dropdown (falls back to the top 20)
+  const allianceList = mpAll && Array.isArray(mpAll.alliances)
+    ? mpAll.alliances.slice(0, 100).map(a => ({ rank: a.rank, tag: a.abbr, name: a.name }))
+    : alliances.map(a => ({ rank: a.rank, tag: a.tag, name: a.name }));
+
+  const res = new Response(JSON.stringify({ events, tracker, codes, alliances, allianceList }), {
     headers: {
       'content-type': 'application/json',
       'cache-control': 'public, max-age=300',
