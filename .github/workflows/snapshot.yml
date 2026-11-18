@@ -1,0 +1,27 @@
+name: Nightly snapshot
+
+on:
+  schedule:
+    - cron: "10 0 * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/snapshot.yml"
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Collect today's snapshot
+        run: |
+          for i in $(seq 1 80); do
+            out=$(curl -s --max-time 280 "https://kingdom-2443-hub.pages.dev/api/collect" || true)
+            echo "$out"
+            case "$out" in
+              *'"remaining":0'*) echo "Snapshot complete"; exit 0 ;;
+            esac
+            sleep 5
+          done
+          echo "Snapshot did not finish"
+          exit 1
