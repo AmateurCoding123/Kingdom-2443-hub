@@ -103,6 +103,8 @@ footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;le
 .tl-now{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--gold);font:700 .85rem Cinzel,serif;letter-spacing:.2em;text-transform:uppercase}
 .tl-now:before,.tl-now:after{content:"";flex:1;border-top:1px solid var(--gold)}
 .tl-err{background:#4a1a26;color:#fff;padding:10px 14px;border-radius:10px}
+/* Growth tab */
+.growth-frame{display:block;width:100%;height:85vh;min-height:600px;border:0;border-radius:12px;background:var(--bg1)}
 </style>
 </head>
 <body>
@@ -114,6 +116,7 @@ footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;le
   <button class="tab" role="tab" data-tab="events" type="button">Events</button>
   <button class="tab" role="tab" data-tab="alliances" type="button">Alliances</button>
   <button class="tab" role="tab" data-tab="timeline" type="button">Timeline</button>
+  <button class="tab" role="tab" data-tab="growth" type="button">Growth</button>
 </div>
 <p id="err" hidden>Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
 
@@ -149,6 +152,11 @@ footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;le
   <div id="kvk-root"><p class="note">Loading...</p></div>
 </section>
 
+<section class="panel sec" id="p-growth" role="tabpanel" hidden>
+  <h2>Power growth</h2>
+  <iframe id="growth-frame" class="growth-frame" title="Kingdom power growth" data-src="/growth.html"></iframe>
+</section>
+
 <footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.<span class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</span></footer>
 </main>
 <script>
@@ -162,6 +170,8 @@ const tabs=[...document.querySelectorAll('.tab')];
 function show(id){
   tabs.forEach(t=>{const on=t.dataset.tab===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1});
   document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+id);
+  // Growth page loads only the first time its tab is opened
+  if(id==='growth'){const f=$('#growth-frame');if(f&&!f.getAttribute('src'))f.setAttribute('src',f.dataset.src)}
 }
 function route(){const id=location.hash.slice(1);show(tabs.some(t=>t.dataset.tab===id)?id:'home')}
 tabs.forEach((t,i)=>{
