@@ -48,11 +48,11 @@ main{max-width:1000px;margin:0 auto;padding:0 18px 60px}
 .sec>h2{font-size:1.5rem;margin-bottom:12px;display:flex;align-items:center;gap:12px;color:var(--gold2)}
 .sec>h2:after{content:"";flex:1;border-top:1px solid var(--line)}
 .live{display:flex;flex-wrap:wrap;gap:10px}
-.chip{background:var(--card);color:var(--ink);border-radius:12px;padding:8px 14px;font-weight:700;border-left:6px solid var(--blue)}
+.chip{background:var(--card);color:var(--ink);border-radius:12px;padding:8px 14px;font-weight:700;border-inline-start:6px solid var(--blue)}
 .chip small{display:block;font-weight:500;color:var(--mut);font-size:.78rem}
 .day{margin-bottom:18px}
 .day h3{font-size:1.05rem;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em}
-.row{background:var(--card);color:var(--ink);border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;border-left:6px solid var(--blue)}
+.row{background:var(--card);color:var(--ink);border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;border-inline-start:6px solid var(--blue)}
 .row.main{box-shadow:0 0 0 2px var(--gold)}
 .row b{flex:1 1 180px;font-weight:700}
 .row time{color:var(--mut);font-size:.88rem}
@@ -70,7 +70,7 @@ main{max-width:1000px;margin:0 auto;padding:0 18px 60px}
 .ally h3{color:var(--snow);font-size:1.05rem}
 .ally p{margin:2px 0}
 .ally .note{color:var(--mut)}
-.ally .tag{margin-left:auto}
+.ally .tag{margin-inline-start:auto}
 .note,#err{color:var(--mut);font-size:.9rem}
 #err{background:#4a1a26;color:#fff;padding:10px 14px;border-radius:10px;margin-top:12px}
 footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:.85rem;text-align:center}
@@ -92,147 +92,106 @@ footer .credit{display:block;margin-top:6px;color:var(--gold);font-weight:600;le
 .kvk-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
 /* Timeline tab */
 .tl-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
-.tl-filters .code b{margin-left:6px;font-weight:600;opacity:.65}
-.tl-item{background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:8px;border-left:6px solid var(--c,var(--blue));display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.tl-filters .code b{margin-inline-start:6px;font-weight:600;opacity:.65}
+.tl-item{background:var(--card);border-radius:10px;padding:10px 14px;margin-bottom:8px;border-inline-start:6px solid var(--c,var(--blue));display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
 .tl-item b{flex:1 1 220px;font-weight:700}
 .tl-item time{color:var(--mut);font-size:.88rem}
 .tl-past{opacity:.55}
 .tl-cur{box-shadow:0 0 0 2px var(--gold);opacity:1}
 .tl-next{box-shadow:0 0 0 2px var(--teal)}
-.tl-in{font-size:.85rem;color:var(--mut);margin-left:auto}
+.tl-in{font-size:.85rem;color:var(--mut);margin-inline-start:auto}
 .tl-now{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--gold);font:700 .85rem Cinzel,serif;letter-spacing:.2em;text-transform:uppercase}
 .tl-now:before,.tl-now:after{content:"";flex:1;border-top:1px solid var(--gold)}
 .tl-err{background:#4a1a26;color:#fff;padding:10px 14px;border-radius:10px}
+.lang{margin-inline-start:auto;flex:none;font:600 .85rem Inter,system-ui,sans-serif;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+/* Time tab */
+.utc-big{font:800 2.8rem/1 Cinzel,serif;color:var(--gold2);letter-spacing:.04em}
+.tz-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.tz-two{grid-template-columns:1fr}}
+.tz-out{font:800 1.7rem/1.2 Cinzel,serif;color:var(--gold2)}
+.tz-out small{display:block;font:400 .9rem Inter,sans-serif;color:var(--mut);margin-top:2px}
 /* Growth tab */
 .growth-frame{display:block;width:100%;height:85vh;min-height:600px;border:0;border-radius:12px;background:var(--bg1)}
 </style>
 </head>
 <body>
 <main>
-<div class="top"><div class="shield">2443</div><div><h1>Kingdom 2443</h1><p id="age">Loading kingdom info…</p><p class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</p></div></div>
+<div class="top"><div class="shield">2443</div><div><h1>Kingdom 2443</h1><p id="age" data-i18n="loading">Loading kingdom info…</p><p class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</p></div><select id="lang" class="lang" aria-label="Language"></select></div>
 <div class="tabs" role="tablist" aria-label="Hub sections">
-  <button class="tab" role="tab" data-tab="home" type="button">Home</button>
-  <button class="tab" role="tab" data-tab="kvk" type="button">Next KvK</button>
-  <button class="tab" role="tab" data-tab="events" type="button">Events</button>
-  <button class="tab" role="tab" data-tab="alliances" type="button">Alliances</button>
-  <button class="tab" role="tab" data-tab="timeline" type="button">Timeline</button>
-  <button class="tab" role="tab" data-tab="growth" type="button">Growth</button>
+  <button class="tab" role="tab" data-tab="home" type="button" data-i18n="t_home">Home</button>
+  <button class="tab" role="tab" data-tab="kvk" type="button" data-i18n="t_kvk">Next KvK</button>
+  <button class="tab" role="tab" data-tab="events" type="button" data-i18n="t_events">Events</button>
+  <button class="tab" role="tab" data-tab="alliances" type="button" data-i18n="t_alliances">Alliances</button>
+  <button class="tab" role="tab" data-tab="timeline" type="button" data-i18n="t_timeline">Timeline</button>
+  <button class="tab" role="tab" data-tab="growth" type="button" data-i18n="t_growth">Growth</button>
+  <button class="tab" role="tab" data-tab="time" type="button" data-i18n="t_time">Time</button>
 </div>
-<p id="err" hidden>Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
+<p id="err" hidden data-i18n="err">Live data did not load. Refresh the page, and check that the /api/hub function is deployed.</p>
 
 <section class="panel" id="p-home" role="tabpanel">
   <div class="hero">
-    <div class="banner"><h2 id="kvkName">Next KvK</h2><div class="clock" id="kvk"></div></div>
+    <div class="banner"><h2 id="kvkName" data-i18n="t_kvk">Next KvK</h2><div class="clock" id="kvk"></div></div>
     <div class="side">
-      <div class="mini"><h3>Times shown in</h3><p id="tz">–</p><span>Converted from UTC</span></div>
+      <div class="mini"><h3 data-i18n="tzin">Times shown in</h3><p id="tz">–</p><span data-i18n="conv">Converted from UTC</span></div>
     </div>
   </div>
-  <div class="sec"><h2>Happening now</h2><div class="live" id="live"></div></div>
-  <div class="sec" style="margin-top:26px"><h2>Gift codes</h2><div class="codes" id="codes"></div>
-    <p class="note">Tap a code to copy it, then redeem it in the game.</p></div>
+  <div class="sec"><h2 data-i18n="hnow">Happening now</h2><div class="live" id="live"></div></div>
+  <div class="sec" style="margin-top:26px"><h2 data-i18n="codes">Gift codes</h2><div class="codes" id="codes"></div>
+    <p class="note" data-i18n="codesnote">Tap a code to copy it, then redeem it in the game.</p></div>
 </section>
 
 <section class="panel sec" id="p-events" role="tabpanel" hidden>
-  <h2>Event calendar</h2><div id="cal"></div>
-  <p class="note">Events marked “probable” may change. Gold outline means a main event.</p>
+  <h2 data-i18n="evh">Event calendar</h2><div id="cal"></div>
+  <p class="note" data-i18n="evnote">Events marked “probable” may change. Gold outline means a main event.</p>
 </section>
 
 <section class="panel sec" id="p-alliances" role="tabpanel" hidden>
-  <h2>Alliances</h2><button class="code" id="onlyOpen" type="button">Show all</button><div id="alli" style="margin-top:12px"></div>
+  <h2 data-i18n="t_alliances">Alliances</h2><button class="code" id="onlyOpen" type="button">Show all</button><div id="alli" style="margin-top:12px"></div>
 </section>
 
 <section class="panel sec" id="p-timeline" role="tabpanel" hidden>
-  <h2>Kingdom timeline</h2>
+  <h2 data-i18n="tlh">Kingdom timeline</h2>
   <div id="tl-root"><p class="note">Loading timeline…</p></div>
   <p class="note" id="tl-foot"></p>
 </section>
 
 <section class="panel sec" id="p-kvk" role="tabpanel" hidden>
-  <h2>Next KvK</h2>
+  <h2 data-i18n="t_kvk">Next KvK</h2>
   <div id="kvk-root"><p class="note">Loading...</p></div>
 </section>
 
 <section class="panel sec" id="p-growth" role="tabpanel" hidden>
-  <h2>Power growth</h2>
+  <h2 data-i18n="grh">Power growth</h2>
   <iframe id="growth-frame" class="growth-frame" title="Kingdom power growth" data-src="/growth.html"></iframe>
 </section>
 
-<footer>Data from kingshot.net and MightPulse. Alliance rankings are by power.<span class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</span></footer>
+<section class="panel sec" id="p-time" role="tabpanel" hidden>
+  <h2 data-i18n="timeh">Time converter</h2>
+  <div class="mini" style="margin-bottom:14px"><h3 data-i18n="utcnow">UTC now</h3><div class="utc-big" id="utc-now">--:--:--</div><span id="utc-date"></span></div>
+  <div class="kvk-form">
+    <div class="tz-two">
+      <label><span data-i18n="zone">Time zone</span>
+        <select id="tz-zone"></select>
+      </label>
+      <label><span data-i18n="date">Date</span>
+        <input type="date" id="tz-date">
+      </label>
+    </div>
+    <label><span data-i18n="tinzone">Time in that zone</span>
+      <input type="time" id="tz-time" step="60">
+    </label>
+    <button class="kvk-go" id="tz-now" type="button" data-i18n="usenow">Use current time</button>
+    <div class="tz-out" id="tz-out">–</div>
+  </div>
+  <h3 class="kvk-h" data-i18n="world">Right now around the world</h3>
+  <div id="tz-list"></div>
+  <p class="note" data-i18n="tznote">Daylight saving is handled automatically. Offsets show how far each zone is from UTC.</p>
+</section>
+
+<footer><span data-i18n="foot">Data from kingshot.net and MightPulse. Alliance rankings are by power.</span><span class="credit">Created by Gassed / ᴳᴴᴼˢᵀˢᴱᴺˢᴱᴵ</span></footer>
 </main>
 <script>
 const $=s=>document.querySelector(s);
 const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
-const tf=new Intl.DateTimeFormat([],{weekday:'short',hour:'2-digit',minute:'2-digit'});
-const df=new Intl.DateTimeFormat([],{weekday:'long',day:'numeric',month:'short'});
-$('#tz').textContent=Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_',' ');
-
-const tabs=[...document.querySelectorAll('.tab')];
-function show(id){
-  tabs.forEach(t=>{const on=t.dataset.tab===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1});
-  document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+id);
-  // Growth page loads only the first time its tab is opened
-  if(id==='growth'){const f=$('#growth-frame');if(f&&!f.getAttribute('src'))f.setAttribute('src',f.dataset.src)}
-}
-function route(){const id=location.hash.slice(1);show(tabs.some(t=>t.dataset.tab===id)?id:'home')}
-tabs.forEach((t,i)=>{
-  t.onclick=()=>{location.hash=t.dataset.tab};
-  t.onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();location.hash=n.dataset.tab}};
-});
-addEventListener('hashchange',route);route();
-
-// kingshot.net numbers KvKs across the whole game (currently #21); our kingdom's own count is 2
-const KVK_OFFSET=19;
-let targets={};
-function parts(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1e3);return[['days',Math.floor(s/86400)],['hrs',Math.floor(s/3600)%24],['min',Math.floor(s/60)%60],['sec',s%60]]}
-function tick(){
-  const box=$('#kvk');box.replaceChildren();
-  if(targets.kvk)for(const[l,v]of parts(targets.kvk-Date.now())){const d=el('div');d.append(el('b',0,String(v).padStart(2,'0')),el('small',0,l));box.append(d)}
-}
-function render(h){
-  const ev=h.events,t=h.tracker&&h.tracker.data&&h.tracker.data.servers&&h.tracker.data.servers[0];
-  if(t){const d=Math.floor((Date.now()-Date.parse(t.openTime))/864e5);$('#age').textContent='Opened '+new Date(t.openTime).toLocaleDateString([],{day:'numeric',month:'long',year:'numeric'})+' · '+d+' days old'}
-  else $('#age').textContent='The kingdom of the Kingshot realm';
-  if(ev){
-    const base=Date.parse(ev.timestamp);
-    if(ev.kvk){targets.kvk=base+ev.kvk.timeLeft.total;$('#kvkName').textContent='KvK #'+(ev.kvk.eventNumber-KVK_OFFSET)+' begins in'}
-    tick();setInterval(tick,1000);
-    const cal=ev.calendar||{},live=$('#live');
-    for(const e of cal.activeEvents||[]){const c=el('div','chip t-'+e.type,e.title);const h=Math.round((Date.parse(e.endUtc)-Date.now())/36e5);c.append(el('small',0,h>47?'ends in '+Math.round(h/24)+' days':'ends in '+Math.max(h,0)+' hrs'));live.append(c)}
-    if(!live.children.length)live.append(el('p','note','No events are running right now.'));
-    const now=Date.now(),days={};
-    const evs=(cal.events||[]).filter(e=>Date.parse(e.endUtc)>now).sort((a,b)=>Date.parse(a.startUtc)-Date.parse(b.startUtc));
-    // Events already underway go in their own group instead of under the day they started (e.g. last Sunday)
-    evs.filter(e=>Date.parse(e.startUtc)<=now).forEach(e=>{(days['Happening now']=days['Happening now']||[]).push(e)});
-    evs.filter(e=>Date.parse(e.startUtc)>now).forEach(e=>{const k=df.format(new Date(e.startUtc));(days[k]=days[k]||[]).push(e)});
-    for(const k in days){const d=el('div','day');d.append(el('h3',0,k));
-      for(const e of days[k]){const r=el('div','row t-'+e.type+(e.isMainEvent?' main':''));r.append(el('b',0,e.title),el('span','tag',e.type.toLowerCase()));
-        if(e.confidence==='probable')r.append(el('span','tag p','probable'));
-        const started=Date.parse(e.startUtc)<=now;
-        r.append(el('time',0,started?'Ends '+tf.format(new Date(e.endUtc)):tf.format(new Date(e.startUtc))+' to '+tf.format(new Date(e.endUtc))));d.append(r)}
-      $('#cal').append(d)}
-    if(!$('#cal').children.length)$('#cal').append(el('p','note','No upcoming events listed.'));
-  }
-  let c=h.codes;c=Array.isArray(c)?c:(c&&c.data&&c.data.giftCodes)||[];
-  if(!Array.isArray(c))c=[];
-  c.forEach(x=>{const v=typeof x==='string'?x:x&&x.code;if(!v)return;if(x.expiresAt&&Date.parse(x.expiresAt)<Date.now())return;const b=el('button','code',v);b.type='button';b.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(v);b.textContent='Copied';setTimeout(()=>b.textContent=v,1200)};$('#codes').append(b)});
-  if(!$('#codes').children.length)$('#codes').append(el('p','note','No active gift codes right now.'));
-}
-function drawAlliances(list){
-  const box=$('#alli'),btn=$('#onlyOpen');let all=false;
-  if(!list.length){box.append(el('p','note','Alliance rankings are not available right now.'));btn.hidden=true;return}
-  const fmt=n=>n>=1e9?(n/1e9).toFixed(2)+'B':(n/1e6).toFixed(1)+'M';
-  const draw=()=>{box.replaceChildren();
-    list.slice(0,all?list.length:6).forEach(a=>{
-      const c=el('div','ally'),b=el('div'),free=a.max-a.members;
-      b.append(el('h3',0,'#'+a.rank+' '+a.name));
-      b.append(el('p','note','Leader: '+a.leader+', '+a.language+', power '+fmt(a.power)));
-      c.append(el('div','atag',a.tag),b,el('span','tag'+(free>0?' open':''),free>0?free+' spaces':'Full'));
-      box.append(c)});
-    btn.textContent=all?'Show top 6 only':'Show all '+list.length;btn.hidden=list.length<=6};
-  btn.onclick=()=>{all=!all;draw()};draw()}
-fetch('/api/hub',{cache:'no-store'}).then(r=>r.json()).then(h=>{render(h);drawAlliances(h.alliances||[])}).catch(e=>{console.error('Hub load failed:',e);$('#err').hidden=false;$('#age').textContent=''});
-</script>
-  <script src="/timeline.js?v=3" charset="utf-8" defer></script>
-  <script src="/kvk.js?v=1" charset="utf-8" defer></script>
-</body>
-</html>
+/* ---------- Language (follows the visitor's browser language) ---------- */
+const I18N={"en":{"loading":"Loading kingdom info…","realm":"The kingdom of the Kingshot realm","opened":"Opened {date} · {d} days old","t_home":"Home","t_kvk":"Next KvK","t_events":"Events","t_alliances":"Alliances","t_timeline":"Timeline","t_growth":"Growth","t_time":"Time","err":"Live data did not load. Refresh the page, and check that the /api/hub function is deployed.","kvkbegins":"KvK #{n} begins in","tzin":"Times shown in","conv":"Converted from UTC","hnow":"Happening now","codes":"Gift codes","codesnote":"Tap a code to copy it, then redeem it in the game.","evh":"Event calendar","evnote":"Events marked “probable” may change. Gold outline means a main event.","tlh":"Kingdom timeline","grh":"Power growth","timeh":"Time converter","utcnow":"UTC now","zone":"Time zone","date":"Date","tinzone":"Time in that zone","usenow":"Use current time","world":"Right now around the world","tznote":"Daylight saving is handled automatically. Offsets show how far each zone is from UTC.","foot":"Data from kingshot.net and MightPulse. Alliance rankings are by power.","u_days":"days","u_hrs":"hrs","u_min":"min","u_sec":"sec","noevents":"No events are running right now.","endsd":"ends in {n} days","endsh":"ends in {n} hrs","probable":"probable","ends":"Ends","to":"to","noup":"No upcoming events listed.","nocodes":"No active gift codes right now.","copied":"Copied","leader":"Leader","power":"power","spaces":"{n} spaces","full":"Full","top6":"Show top 6 only","showall":"Show all {n}","noall":"Alliance rankings are not available right now.","nextday":"next day","prevday":"previous day","isoff":"is","you":"you"},"es":{"loading":"Cargando información del reino…","realm":"El reino del mundo de Kingshot","opened":"Abierto el {date} · {d} días","t_home":"Inicio","t_kvk":"Próxima KvK","t_events":"Eventos","t_alliances":"Alianzas","t_timeline":"Cronología","t_growth":"Crecimiento","t_time":"Hora","err":"No se cargaron los datos en vivo. Recarga la página y comprueba que la función /api/hub esté desplegada.","kvkbegins":"La KvK #{n} empieza en","tzin":"Horas mostradas en","conv":"Convertido desde UTC","hnow":"En curso ahora","codes":"Códigos de regalo","codesnote":"Toca un código para copiarlo y canjéalo en el juego.","evh":"Calendario de eventos","evnote":"Los eventos marcados como “probable” pueden cambiar. El borde dorado indica un evento principal.","tlh":"Cronología del reino","grh":"Crecimiento de poder","timeh":"Conversor de hora","utcnow":"UTC ahora","zone":"Zona horaria","date":"Fecha","tinzone":"Hora en esa zona","usenow":"Usar la hora actual","world":"Ahora mismo en el mundo","tznote":"El horario de verano se aplica automáticamente. Los desfases muestran la diferencia con UTC.","foot":"Datos de kingshot.net y MightPulse. Las alianzas se clasifican por poder.","u_days":"días","u_hrs":"h","u_min":"min","u_sec":"s","noevents":"No hay eventos en curso ahora mismo.","endsd":"termina en {n} días","endsh":"termina en {n} h","probable":"probable","ends":"Termina","to":"a","noup":"No hay próximos eventos.","nocodes":"No hay códigos de regalo activos ahora mismo.","copied":"Copiado","leader":"Líder","power":"poder","spaces":"{n} plazas","full":"Llena","top6":"Mostrar solo las 6 primeras","showall":"Mostrar las {n}","noall":"La clasificación de alianzas no está disponible ahora mismo.","nextday":"día siguiente","prevday":"día anterior","isoff":"es","you":"tú"},"pt":{"loading":"Carregando informações do reino…","realm":"O reino do mundo de Kingshot","opened":"Aberto em {date} · {d} dias","t_home":"Início","t_kvk":"Próxima KvK","t_events":"Eventos","t_alliances":"Alianças","t_timeline":"Linha do tempo","t_growth":"Crescimento","t_time":"Hora","err":"Os dados ao vivo não carregaram. Atualize a página e verifique se a função /api/hub foi implantada.","kvkbegins":"A KvK #{n} começa em","tzin":"Horários exibidos em","conv":"Convertido de UTC","hnow":"Acontecendo agora","codes":"Códigos de presente","codesnote":"Toque em um código para copiá-lo e resgate-o no jogo.","evh":"Calendário de eventos","evnote":"Eventos marcados como “provável” podem mudar. Contorno dourado indica um evento principal.","tlh":"Linha do tempo do reino","grh":"Crescimento de poder","timeh":"Conversor de horário","utcnow":"UTC agora","zone":"Fuso horário","date":"Data","tinzone":"Hora nesse fuso","usenow":"Usar a hora atual","world":"Agora pelo mundo","tznote":"O horário de verão é aplicado automaticamente. As diferenças mostram a distância para o UTC.","foot":"Dados de kingshot.net e MightPulse. As alianças são classificadas por poder.","u_days":"dias","u_hrs":"h","u_min":"min","u_sec":"s","noevents":"Nenhum evento em andamento agora.","endsd":"termina em {n} dias","endsh":"termina em {n} h","probable":"provável","ends":"Termina","to":"até","noup":"Nenhum evento futuro listado.","nocodes":"Nenhum código de presente ativo agora.","copied":"Copiado","leader":"Líder","power":"poder","spaces":"{n} vagas","full":"Cheia","top6":"Mostrar só as 6 primeiras","showall":"Mostrar todas ({n})","noall":"O ranking de alianças não está disponível agora.","nextday":"dia seguinte","prevday":"dia anterior","isoff":"é","you":"você"},"fr":{"loading":"Chargement des infos du royaume…","realm":"Le royaume de l’univers Kingshot","opened":"Ouvert le {date} · {d} jours","t_home":"Accueil","t_kvk":"Prochaine KvK","t_events":"Événements","t_alliances":"Alliances","t_timeline":"Chronologie","t_growth":"Croissance","t_time":"Heure","err":"Les données en direct n’ont pas chargé. Actualisez la page et vérifiez que la fonction /api/hub est déployée.","kvkbegins":"La KvK #{n} commence dans","tzin":"Heures affichées en","conv":"Converti depuis UTC","hnow":"En cours","codes":"Codes cadeaux","codesnote":"Touchez un code pour le copier, puis utilisez-le dans le jeu.","evh":"Calendrier des événements","evnote":"Les événements « probables » peuvent changer. Un contour doré indique un événement principal.","tlh":"Chronologie du royaume","grh":"Croissance de puissance","timeh":"Convertisseur d’heure","utcnow":"UTC maintenant","zone":"Fuseau horaire","date":"Date","tinzone":"Heure dans ce fuseau","usenow":"Utiliser l’heure actuelle","world":"En ce moment dans le monde","tznote":"L’heure d’été est gérée automatiquement. Les décalages indiquent l’écart avec UTC.","foot":"Données de kingshot.net et MightPulse. Les alliances sont classées par puissance.","u_days":"jours","u_hrs":"h","u_min":"min","u_sec":"s","noevents":"Aucun événement en cours.","endsd":"se termine dans {n} jours","endsh":"se termine dans {n} h","probable":"probable","ends":"
