@@ -15,9 +15,10 @@ a{color:#e6c778}
 main{padding:8px;max-width:900px;margin:auto}
 .panel{background:#171d2a;border:1px solid #34394a;border-radius:13px;padding:14px;margin-bottom:12px}
 .buttons{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-button{background:#1a2030;color:#d9c58f;border:1px solid #51472f;padding:11px 16px;border-radius:9px;cursor:pointer}
+button{background:#1a2030;color:#d9c58f;border:1px solid #51472f;padding:11px 16px;border-radius:9px;cursor:pointer;font:inherit}
 button.active{background:#8b7139;color:#fff}
-input{background:#0b0d13;border:1px solid #51472f;color:#fff;padding:11px;border-radius:8px;width:100%;font:inherit}
+input,select{background:#0b0d13;border:1px solid #51472f;color:#fff;padding:11px;border-radius:8px;width:100%;font:inherit}
+label{display:block;color:#e6c778;font-weight:bold;margin:10px 0 4px}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .stat{background:#171d2a;border:1px solid #34394a;border-radius:12px;padding:12px}
 .stat b{display:block;font-size:clamp(16px,4.6vw,22px);color:#e6c778}
@@ -32,48 +33,82 @@ td.name{font-weight:bold;white-space:normal;word-break:break-word}
 td.tag{color:#9ba2b4}
 .up{color:#8bd49a}.down{color:#ff9999}.flat,.new{color:#9ba2b4}
 .error{color:#ff9999}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
 <header>
 <h1>KINGDOM 2443</h1>
-<div class="muted">Power growth · top 200 players</div>
+<div class="muted">Power growth · members of the top 100 alliances</div>
 <div style="margin-top:8px"><a href="index.html">← Back to the hub</a></div>
 </header>
 <main>
-<div class="panel">
- <strong>Compare with</strong>
- <div class="buttons" id="periods">
-  <button data-days="1" class="active">Yesterday</button>
-  <button data-days="7">7 days ago</button>
-  <button data-days="30">30 days ago</button>
+
+<div id="loginPanel" class="panel hidden">
+ <strong>Leadership only</strong>
+ <label for="password">Leadership password</label>
+ <input id="password" type="password" autocomplete="current-password" placeholder="Enter leadership password">
+ <div class="buttons"><button id="loginButton" class="active">Log in</button></div>
+ <div id="loginMessage" class="muted"></div>
+</div>
+
+<div id="app" class="hidden">
+ <div class="panel">
+  <strong>Compare with</strong>
+  <div class="buttons" id="periods">
+   <button data-days="1" class="active">Yesterday</button>
+   <button data-days="7">7 days ago</button>
+   <button data-days="30">30 days ago</button>
+  </div>
+  <strong>Show</strong>
+  <div class="buttons" id="views">
+   <button data-view="power" class="active">By power</button>
+   <button data-view="growth">Top growth</button>
+   <button data-view="flat">No growth</button>
+  </div>
+  <div id="tolBox" class="hidden">
+   <label for="tol">Counts as no growth</label>
+   <select id="tol">
+    <option value="0">Exactly zero</option>
+    <option value="0.1">Under 0.1%</option>
+    <option value="0.5">Under 0.5%</option>
+    <option value="1">Under 1%</option>
+   </select>
+  </div>
+  <label for="min">Minimum power</label>
+  <select id="min">
+   <option value="0">Any</option>
+   <option value="5000000">5M and up</option>
+   <option value="10000000">10M and up</option>
+   <option value="25000000">25M and up</option>
+   <option value="50000000">50M and up</option>
+   <option value="100000000">100M and up</option>
+  </select>
+  <div id="note" class="muted" style="margin-top:10px">Loading...</div>
  </div>
- <strong>Show</strong>
- <div class="buttons" id="views">
-  <button data-view="power" class="active">By power</button>
-  <button data-view="growth">Top growth</button>
-  <button data-view="flat">No growth</button>
+ <div class="stats">
+  <div class="stat"><b id="sTotal">--</b><span>Total growth</span></div>
+  <div class="stat"><b id="sGrowing">--</b><span>Growing</span></div>
+  <div class="stat"><b id="sSleep">--</b><span>😴 No growth</span></div>
  </div>
- <div id="note" class="muted">Loading...</div>
+ <input id="search" placeholder="Search name or alliance...">
+ <div class="panel table-scroll" style="margin-top:12px;padding:4px 6px">
+  <table>
+   <thead><tr><th>#</th><th>Name</th><th>Alliance</th><th class="num">Power</th><th class="num">Change</th><th class="num">%</th></tr></thead>
+   <tbody id="rows"><tr><td colspan="6">Loading...</td></tr></tbody>
+  </table>
+ </div>
+ <div class="buttons"><button id="moreButton" class="hidden">Show more</button></div>
+ <p class="muted" style="font-size:12px">Data is saved automatically every night. "new" means the player was not in the comparison day's data. A player with no growth may be saving, or may simply be inactive.</p>
 </div>
-<div class="stats">
- <div class="stat"><b id="sTotal">--</b><span>Total growth</span></div>
- <div class="stat"><b id="sGrowing">--</b><span>Growing</span></div>
- <div class="stat"><b id="sSleep">--</b><span>😴 No growth</span></div>
-</div>
-<input id="search" placeholder="Search name or alliance...">
-<div class="panel table-scroll" style="margin-top:12px;padding:4px 6px">
- <table>
-  <thead><tr><th>#</th><th>Name</th><th>Alliance</th><th class="num">Power</th><th class="num">Change</th><th class="num">%</th></tr></thead>
-  <tbody id="rows"><tr><td colspan="6">Loading...</td></tr></tbody>
- </table>
-</div>
-<p class="muted" style="font-size:12px">"new" means the player has moved into the top 200 since the comparison day. A player with no growth may be saving, or may simply be inactive.</p>
 </main>
 <script>
-let days = 1, view = "power", members = [];
+let days = 1, view = "power", offset = 0, members = [], timer = null;
+let password = "";
+try { password = sessionStorage.getItem("kgLeaderPass") || ""; } catch (e) {}
 if (window.self !== window.top) document.querySelector("header").style.display = "none";
 
+const $ = id => document.getElementById(id);
 function esc(v){const s=document.createElement("span");s.textContent=String(v??"");return s.innerHTML}
 function fmt(n){
   const a=Math.abs(n);
@@ -84,66 +119,102 @@ function fmt(n){
 function signed(n){return (n<0?"\u2212":"+")+fmt(n)}
 function pctText(p){return (p<0?"-":"+")+Math.abs(p).toFixed(1)+"%"}
 
-function visible(){
-  const q = document.getElementById("search").value.toLowerCase().trim();
-  let list = members.filter(m => m.name.toLowerCase().includes(q) || (m.alliance||"").toLowerCase().includes(q));
-  if(view === "flat") list = list.filter(m => m.status === "flat");
-  if(view === "growth") list = list.slice().sort((a,b) => (b.change ?? -1e18) - (a.change ?? -1e18));
-  return list;
+function showLogin(message){
+  $("app").classList.add("hidden");
+  $("loginPanel").classList.remove("hidden");
+  $("loginMessage").textContent = message || "";
+}
+function showApp(){
+  $("loginPanel").classList.add("hidden");
+  $("app").classList.remove("hidden");
 }
 
-function render(){
-  const list = visible();
-  const empty = view === "flat" ? "Nobody in the top 200 has zero growth for this period." : "No members match.";
-  document.getElementById("rows").innerHTML = list.length ? list.map(m=>{
+function render(emptyText){
+  $("rows").innerHTML = members.length ? members.map(m=>{
     let change="", pct="";
     if(m.status==="up"||m.status==="down"){change=`<span class="${m.status}">${signed(m.change)}</span>`;pct=`<span class="${m.status}">${pctText(m.pct)}</span>`}
     else if(m.status==="flat"){change='<span class="flat">😴 0</span>';pct='<span class="flat">+0.0%</span>'}
     else if(m.status==="new"){change='<span class="new">new</span>'}
     else {change='<span class="new">\u2014</span>'}
     return `<tr><td class="rank">${m.rank}</td><td class="name">${esc(m.name)}</td><td class="tag">${esc(m.alliance||"\u2014")}</td><td class="num">${fmt(m.power)}</td><td class="num">${change}</td><td class="num">${pct}</td></tr>`;
-  }).join("") : `<tr><td colspan="6">${empty}</td></tr>`;
+  }).join("") : `<tr><td colspan="6">${esc(emptyText||"No members match.")}</td></tr>`;
 }
 
-async function load(){
-  const note = document.getElementById("note");
-  note.className = "muted"; note.textContent = "Loading...";
+async function load(append){
+  if(!password){showLogin("");return}
+  const note = $("note");
+  if(!append){offset = 0; members = []; note.className = "muted"; note.textContent = "Loading...";}
+  const url = "/api/growth?days="+days+"&view="+view+"&tol="+$("tol").value+"&min="+$("min").value+
+    "&q="+encodeURIComponent($("search").value.trim())+"&offset="+offset;
   try{
-    const r = await fetch("/api/growth?days="+days, {cache:"no-store"});
+    const r = await fetch(url, {cache:"no-store", headers:{"x-leader-password":password}});
     const data = await r.json();
+    if(r.status===401){
+      password = ""; try{sessionStorage.removeItem("kgLeaderPass")}catch(e){}
+      showLogin("That password was not accepted.");
+      return;
+    }
     if(!r.ok) throw new Error(data.details || data.error || ("HTTP "+r.status));
-    members = data.members || [];
-    if(!data.baselineDate){
-      note.textContent = "Today's first snapshot has been saved. Come back tomorrow to see growth.";
+    showApp();
+    members = append ? members.concat(data.members || []) : (data.members || []);
+    const s = data.summary;
+    if(!data.latestDate){
+      note.className = "muted";
+      note.textContent = "No snapshot saved yet. The first one is taken automatically tonight.";
+    }else if(!data.baselineDate){
+      note.className = "muted";
+      note.textContent = "Data from "+data.latestDate+". Only one day is saved so far, so growth shows from tomorrow.";
     }else{
-      let t = "Compared with the data from "+data.baselineDate+".";
-      if(data.baselineDate !== new Date(Date.now()-days*86400000).toISOString().slice(0,10))
+      let t = "Data from "+data.latestDate+", compared with "+data.baselineDate+".";
+      const wanted = new Date(Date.parse(data.latestDate)-days*86400000).toISOString().slice(0,10);
+      if(data.baselineDate !== wanted)
         t += " (Only "+data.snapshotDays+" day"+(data.snapshotDays===1?"":"s")+" of history saved so far.)";
+      note.className = "muted";
       note.textContent = t;
     }
-    const cmp = members.filter(m=>m.status==="up"||m.status==="down"||m.status==="flat");
-    document.getElementById("sTotal").textContent = cmp.length ? signed(cmp.reduce((s,m)=>s+m.change,0)) : "--";
-    document.getElementById("sGrowing").textContent = cmp.length ? cmp.filter(m=>m.status==="up").length : "--";
-    document.getElementById("sSleep").textContent = cmp.length ? cmp.filter(m=>m.status==="flat").length : "--";
-    render();
+    if(s && data.baselineDate){
+      $("sTotal").textContent = s.compared ? signed(s.total) : "--";
+      $("sGrowing").textContent = s.compared ? s.growing : "--";
+      $("sSleep").textContent = s.compared ? s.lowgrowth : "--";
+    }else{
+      $("sTotal").textContent = $("sGrowing").textContent = $("sSleep").textContent = "--";
+    }
+    $("moreButton").classList.toggle("hidden", !data.hasMore);
+    const empty = view==="flat" ? "Nobody matches this setting for this period." : "No members match.";
+    render(empty);
   }catch(e){
     note.className = "error"; note.textContent = "Could not load: " + e.message;
-    document.getElementById("rows").innerHTML = '<tr><td colspan="6">No data.</td></tr>';
+    if(!append) $("rows").innerHTML = '<tr><td colspan="6">No data.</td></tr>';
   }
 }
+
+$("loginButton").addEventListener("click",()=>{
+  const value = $("password").value;
+  if(!value){$("loginMessage").textContent = "Enter the password."; return}
+  password = value;
+  try{sessionStorage.setItem("kgLeaderPass", password)}catch(e){}
+  $("password").value = "";
+  load(false);
+});
+$("password").addEventListener("keydown",e=>{ if(e.key==="Enter") $("loginButton").click(); });
 
 document.querySelectorAll("[data-days]").forEach(b=>b.addEventListener("click",()=>{
   days = Number(b.dataset.days);
   document.querySelectorAll("[data-days]").forEach(x=>x.classList.toggle("active",x===b));
-  load();
+  load(false);
 }));
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{
   view = b.dataset.view;
   document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x===b));
-  render();
+  $("tolBox").classList.toggle("hidden", view!=="flat");
+  load(false);
 }));
-document.getElementById("search").addEventListener("input",render);
-load();
+$("tol").addEventListener("change",()=>load(false));
+$("min").addEventListener("change",()=>load(false));
+$("search").addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(()=>load(false),400)});
+$("moreButton").addEventListener("click",()=>{offset += 100; load(true)});
+
+if(password){ showApp(); load(false); } else { showLogin(""); }
 </script>
 </body>
 </html>
