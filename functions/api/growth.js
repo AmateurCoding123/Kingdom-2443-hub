@@ -1,151 +1,147 @@
-// Kingdom 2443 player power growth.
-// Saves a snapshot of the top players' power once a day (the first time the page
-// is opened that day) and compares live power with an earlier saved day.
-const KINGDOM = 2443;
-const SOURCE = "https://mightpulse.com/api/kingdoms/" + KINGDOM + "?players=200";
+// Kingdom 2443 player power growth (leadership only).
+// Reads the nightly snapshots saved by /api/collect (members of the top 100 alliances)
+// and compares the latest saved day with an earlier one.
+//
+// Query: days=1|7|30, view=power|growth|flat, tol=0|0.1|0.5|1, min=<power>, q=<search>, offset=<n>
+// Header: x-leader-password (checked against the LEADER_PASSWORD secret, or ADMIN_PASSWORD if that is not set)
 const TABLE = "kingdom_player_snapshots";
-const KEEP_DAYS = 90;
+const LOG = "kingdom_collect_log";
 const DAY = 86400000;
+const PAGE = 100;
+
+const json = (d, s = 200) => Response.json(d, { status: s, headers: { "Cache-Control": "no-store" } });
 
 function dayString(ms) {
   return new Date(ms).toISOString().slice(0, 10);
 }
 
-function pick(obj, keys) {
-  for (const k of keys) {
-    const v = obj ? obj[k] : undefined;
-    if (v !== undefined && v !== null && v !== "") return v;
-  }
-  return null;
-}
-
-function findPlayers(data) {
-  if (Array.isArray(data)) return data;
-  if (!data || typeof data !== "object") return [];
-  const names = ["players", "governors", "top_players", "personal_power"];
-  for (const k of names) if (Array.isArray(data[k])) return data[k];
-  for (const v of Object.values(data)) {
-    if (v && typeof v === "object" && !Array.isArray(v)) {
-      for (const k of names) if (Array.isArray(v[k])) return v[k];
-    }
-  }
-  return [];
-}
-
-function parsePlayer(item) {
-  const p = (item && item.player) || item || {};
-  const id = pick(p, ["governor_id", "fid", "gov_id", "uid", "id"]);
-  const name = pick(p, ["nick_name", "nickname", "player_name", "governor_name", "name"]);
-  let power = pick(p, ["power", "might", "score"]);
-  if (power && typeof power === "object") power = power.value ?? power.total ?? power.amount;
-  power = Number(String(power).replace(/,/g, ""));
-  if ((id === null && name === null) || !Number.isFinite(power)) return null;
-  let alliance = pick(p, ["alliance_abbr", "abbr", "alliance_tag", "alliance"]);
-  if (alliance && typeof alliance === "object") alliance = alliance.abbr || alliance.tag || alliance.name;
-  return {
-    id: String(id ?? name),
-    name: String(name ?? id),
-    alliance: alliance ? String(alliance) : "",
-    power: Math.round(power)
-  };
+function same(a, b) {
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
 }
 
 export async function onRequest({ request, env }) {
-  if (request.method !== "GET") {
-    return Response.json({ error: "Method not allowed" }, { status: 405 });
+  if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+
+  const secret = env.LEADER_PASSWORD || env.ADMIN_PASSWORD;
+  if (!secret) {
+    return json({ error: "No password set", details: "Add a secret named LEADER_PASSWORD to this project." }, 500);
   }
+  if (!same(request.headers.get("x-leader-password") || "", secret)) {
+    return json({ error: "Wrong password" }, 401);
+  }
+
   const db = env.DB;
   if (!db) {
-    return Response.json(
-      { error: "Database not linked", details: "Add a D1 binding named DB to this project, then redeploy." },
-      { status: 500 }
-    );
+    return json({ error: "Database not linked", details: "Add a D1 binding named DB to this project, then redeploy." }, 500);
   }
+
   try {
     const params = new URL(request.url).searchParams;
     const asked = Number(params.get("days"));
     const days = [1, 7, 30].includes(asked) ? asked : 1;
+    const view = ["power", "growth", "flat"].includes(params.get("view")) ? params.get("view") : "power";
+    const tol = Math.max(0, Number(params.get("tol")) || 0);
+    const min = Math.max(0, Number(params.get("min")) || 0);
+    const q = (params.get("q") || "").trim().toLowerCase();
+    const offset = Math.max(0, Math.floor(Number(params.get("offset")) || 0));
 
-    // Creates the table the first time; does nothing after that.
-    await db.prepare(
-      "CREATE TABLE IF NOT EXISTS " + TABLE +
-      " (snap_date TEXT NOT NULL, player_id TEXT NOT NULL, player_name TEXT NOT NULL, alliance TEXT, power INTEGER NOT NULL, PRIMARY KEY (snap_date, player_id))"
-    ).run();
+    await db.batch([
+      db.prepare(
+        "CREATE TABLE IF NOT EXISTS " + TABLE +
+        " (snap_date TEXT NOT NULL, player_id TEXT NOT NULL, player_name TEXT NOT NULL, alliance TEXT, power INTEGER NOT NULL, PRIMARY KEY (snap_date, player_id))"
+      ),
+      db.prepare(
+        "CREATE TABLE IF NOT EXISTS " + LOG +
+        " (snap_date TEXT NOT NULL, alliance_tag TEXT NOT NULL, PRIMARY KEY (snap_date, alliance_tag))"
+      )
+    ]);
 
-    // Live data from MightPulse.
-    const response = await fetch(SOURCE, {
-      headers: { Accept: "application/json", "user-agent": "Kingdom2443-Hub" },
-      signal: AbortSignal.timeout(25000)
-    });
-    if (!response.ok) throw new Error("MightPulse HTTP " + response.status);
-    const data = await response.json();
-    const raw = findPlayers(data);
-    const byId = new Map();
-    for (const item of raw) {
-      const p = parsePlayer(item);
-      if (p) byId.set(p.id, p);
-    }
-    const live = [...byId.values()].sort((a, b) => b.power - a.power);
-    if (!live.length) {
-      const keys = data && typeof data === "object" ? Object.keys(data).join(", ") : typeof data;
-      const first = raw[0] && typeof raw[0] === "object" ? Object.keys(raw[0]).join(", ") : "none";
-      throw new Error("No players found. Top-level keys: " + keys + ". Fields on first player: " + first);
-    }
-
-    // Save today's snapshot once (the first time the page is opened each day).
-    const today = dayString(Date.now());
-    const have = await db.prepare("SELECT COUNT(*) AS n FROM " + TABLE + " WHERE snap_date = ?").bind(today).first();
-    if (!have || !have.n) {
-      const insert = db.prepare(
-        "INSERT OR REPLACE INTO " + TABLE + " (snap_date, player_id, player_name, alliance, power) VALUES (?, ?, ?, ?, ?)"
-      );
-      for (let i = 0; i < live.length; i += 50) {
-        await db.batch(live.slice(i, i + 50).map(p => insert.bind(today, p.id, p.name, p.alliance, p.power)));
-      }
-      await db.prepare("DELETE FROM " + TABLE + " WHERE snap_date < ?")
-        .bind(dayString(Date.now() - KEEP_DAYS * DAY)).run();
-    }
-
-    // Choose the earlier day to compare against.
     const datesResult = await db.prepare("SELECT DISTINCT snap_date FROM " + TABLE + " ORDER BY snap_date ASC").all();
     const dates = (datesResult.results || []).map(r => r.snap_date);
-    const earlier = dates.filter(d => d < today);
-    const target = dayString(Date.now() - days * DAY);
-    const atOrBefore = earlier.filter(d => d <= target);
-    const baselineDate = atOrBefore.length
-      ? atOrBefore[atOrBefore.length - 1]
-      : (earlier.length ? earlier[0] : null);
+    const empty = { latestDate: null, baselineDate: null, snapshotDays: dates.length, summary: null, members: [], hasMore: false, total: 0 };
+    if (!dates.length) return json(empty);
 
+    // Latest day: the newest one the collector finished. If none has finished yet, the newest with any data.
+    const complete = await db.prepare(
+      "SELECT snap_date FROM " + LOG + " WHERE alliance_tag = '__complete__' ORDER BY snap_date DESC LIMIT 1"
+    ).first();
+    const latestDate = complete && dates.includes(complete.snap_date) ? complete.snap_date : dates[dates.length - 1];
+
+    // Comparison day: the newest saved day at or before (latest - days), else the oldest earlier day.
+    const earlier = dates.filter(d => d < latestDate);
+    const target = dayString(Date.parse(latestDate) - days * DAY);
+    const atOrBefore = earlier.filter(d => d <= target);
+    const baselineDate = atOrBefore.length ? atOrBefore[atOrBefore.length - 1] : (earlier.length ? earlier[0] : null);
+    const snapshotDays = dates.filter(d => d <= latestDate).length;
+
+    const latestRows = await db.prepare(
+      "SELECT player_id, player_name, alliance, power FROM " + TABLE + " WHERE snap_date = ? ORDER BY power DESC"
+    ).bind(latestDate).all();
     const baseline = new Map();
     if (baselineDate) {
-      const rows = await db.prepare("SELECT player_id, power FROM " + TABLE + " WHERE snap_date = ?")
-        .bind(baselineDate).all();
+      const rows = await db.prepare("SELECT player_id, power FROM " + TABLE + " WHERE snap_date = ?").bind(baselineDate).all();
       for (const r of rows.results || []) baseline.set(r.player_id, r.power);
     }
 
-    const members = live.map((p, i) => {
-      const base = { id: p.id, name: p.name, alliance: p.alliance, power: p.power, rank: i + 1 };
-      if (!baselineDate) return { ...base, status: "none" };
-      const before = baseline.get(p.id);
-      if (before === undefined) return { ...base, status: "new" };
-      const change = p.power - before;
+    // Every member, ranked by power across the whole kingdom.
+    let all = (latestRows.results || []).map((r, i) => {
+      const m = { id: r.player_id, name: r.player_name, alliance: r.alliance || "", power: r.power, rank: i + 1 };
+      if (!baselineDate) return { ...m, status: "none" };
+      const before = baseline.get(r.player_id);
+      if (before === undefined) return { ...m, status: "new" };
+      const change = r.power - before;
       return {
-        ...base,
+        ...m,
         change,
         pct: before > 0 ? (change / before) * 100 : 0,
         status: change === 0 ? "flat" : (change > 0 ? "up" : "down")
       };
     });
 
-    return Response.json({
-      today,
-      requestedDays: days,
+    const compared = m => m.status === "up" || m.status === "down" || m.status === "flat";
+    const isFlat = m => compared(m) && (tol === 0 ? m.change === 0 : Math.abs(m.pct) < tol);
+
+    if (min > 0) all = all.filter(m => m.power >= min);
+
+    // Summary covers everyone above the minimum power (not narrowed by the search box).
+    const withChange = all.filter(compared);
+    const summary = {
+      compared: withChange.length,
+      total: withChange.reduce((s, m) => s + m.change, 0),
+      growing: withChange.filter(m => m.change > 0).length,
+      lowgrowth: withChange.filter(isFlat).length
+    };
+
+    let list = q
+      ? all.filter(m => m.name.toLowerCase().includes(q) || m.alliance.toLowerCase().includes(q))
+      : all;
+
+    if (view === "growth") {
+      // Biggest gain first; players with nothing to compare go last, by power.
+      list = [...list].sort((a, b) => {
+        const ca = compared(a), cb = compared(b);
+        if (ca !== cb) return ca ? -1 : 1;
+        return ca ? b.change - a.change || b.power - a.power : b.power - a.power;
+      });
+    } else if (view === "flat") {
+      // Strongest sleepers first.
+      list = list.filter(isFlat);
+    }
+
+    return json({
+      latestDate,
       baselineDate,
-      snapshotDays: dates.length,
-      count: members.length,
-      members
-    }, { headers: { "Cache-Control": "no-store" } });
+      snapshotDays,
+      requestedDays: days,
+      summary,
+      total: list.length,
+      hasMore: offset + PAGE < list.length,
+      members: list.slice(offset, offset + PAGE)
+    });
   } catch (error) {
-    return Response.json({ error: "Request failed", details: error.message }, { status: 500 });
+    return json({ error: "Request failed", details: error.message }, 500);
   }
-                                                                               }
+}
